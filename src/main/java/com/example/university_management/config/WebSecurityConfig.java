@@ -25,16 +25,13 @@ public class WebSecurityConfig {
     
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> all = Collections.singletonList("*");
         configuration.setAllowedOrigins(all);
         configuration.setAllowedMethods(all);
         configuration.setAllowedHeaders(all);
         configuration.setAllowCredentials(false);
-        
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
