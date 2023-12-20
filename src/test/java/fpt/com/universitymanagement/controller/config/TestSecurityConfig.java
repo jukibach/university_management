@@ -1,4 +1,4 @@
-package com.example.university_management.controller.config;
+package fpt.com.universitymanagement.controller.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
