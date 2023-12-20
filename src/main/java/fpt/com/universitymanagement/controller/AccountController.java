@@ -1,7 +1,7 @@
-package com.example.university_management.controller;
+package fpt.com.universitymanagement.controller;
 
-import com.example.university_management.entity.Account;
-import com.example.university_management.service.AccountService;
+import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.service.AccountService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +13,8 @@ import java.util.List;
 public class AccountController {
     final
     AccountService service;
+    
+    //test git
     
     public AccountController(AccountService service) {
         this.service = service;

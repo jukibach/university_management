@@ -1,6 +1,6 @@
-package com.example.university_management.repository;
+package fpt.com.universitymanagement.repository;
 
-import com.example.university_management.entity.Account;
+import fpt.com.universitymanagement.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

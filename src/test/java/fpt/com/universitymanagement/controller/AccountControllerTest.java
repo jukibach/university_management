@@ -1,12 +1,12 @@
-package com.example.university_management.controller;
+package fpt.com.universitymanagement.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.when;
 
-import com.example.university_management.entity.Account;
-import com.example.university_management.service.AccountService;
+import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
