@@ -10,7 +10,6 @@ import java.util.List;
 @Service
 public class AccountServiceImpl implements AccountService {
     
-    final
     AccountRepository accountRepository;
     
     public AccountServiceImpl(AccountRepository accountRepository) {
