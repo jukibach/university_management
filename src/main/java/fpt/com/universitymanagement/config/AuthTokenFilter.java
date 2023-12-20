@@ -1,4 +1,4 @@
-package com.example.university_management.config;
+package fpt.com.universitymanagement.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

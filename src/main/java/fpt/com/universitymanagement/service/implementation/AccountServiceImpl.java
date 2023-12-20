@@ -1,8 +1,8 @@
-package com.example.university_management.service.implementation;
+package fpt.com.universitymanagement.service.implementation;
 
-import com.example.university_management.entity.Account;
-import com.example.university_management.repository.AccountRepository;
-import com.example.university_management.service.AccountService;
+import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.repository.AccountRepository;
+import fpt.com.universitymanagement.service.AccountService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

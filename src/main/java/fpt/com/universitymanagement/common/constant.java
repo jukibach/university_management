@@ -1,4 +1,4 @@
-package com.example.university_management.common;
+package fpt.com.universitymanagement.common;
 
 public class constant {
 }

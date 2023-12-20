@@ -1,4 +1,4 @@
-package com.example.university_management.entity;
+package fpt.com.universitymanagement.entity;
 
 
 import jakarta.persistence.*;

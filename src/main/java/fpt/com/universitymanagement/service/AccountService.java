@@ -1,6 +1,6 @@
-package com.example.university_management.service;
+package fpt.com.universitymanagement.service;
 
-import com.example.university_management.entity.Account;
+import fpt.com.universitymanagement.entity.Account;
 
 import java.util.List;
 

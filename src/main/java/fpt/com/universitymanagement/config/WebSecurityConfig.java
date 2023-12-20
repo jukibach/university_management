@@ -1,4 +1,4 @@
-package com.example.university_management.config;
+package fpt.com.universitymanagement.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
