@@ -1,4 +1,4 @@
-package fpt.com.universitymanagement.service.implementation;
+package fpt.com.universitymanagement.service.impl;
 
 import fpt.com.universitymanagement.entity.Account;
 import fpt.com.universitymanagement.repository.AccountRepository;
@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class AccountServiceImpl implements AccountService {
     
-    AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
     
     public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
