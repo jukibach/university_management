@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static fpt.com.universitymanagement.common.Constant.ACCOUNT_CONTROLLER;
+
 @RestController
-@RequestMapping("/v1/api/accounts")
+@RequestMapping(ACCOUNT_CONTROLLER)
 public class AccountController {
-    final
-    AccountService service;
-    
-    //test git
+    private final AccountService service;
     
     public AccountController(AccountService service) {
         this.service = service;

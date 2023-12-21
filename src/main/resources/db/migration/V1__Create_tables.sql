@@ -1,21 +1,24 @@
-CREATE TABLE accounts
+CREATE TABLE public.accounts
 (
-    id         UUID         NOT NULL,
-    created_at date,
-    updated_at date,
-    user_name  VARCHAR(255) NOT NULL,
-    password   VARCHAR(255) NOT NULL,
-    email      VARCHAR(255) NOT NULL,
-    CONSTRAINT pk_accounts PRIMARY KEY (id)
+    id         UUID PRIMARY KEY,
+    user_name  VARCHAR(256) NOT NULL,
+    password   VARCHAR(256) NOT NULL,
+    email      VARCHAR(256) NOT NULL,
+    created_at DATE,
+    updated_at DATE,
+    created_by VARCHAR(256),
+    updated_by VARCHAR(256)
 );
+CREATE INDEX idx_accounts_user_name ON public.accounts (user_name);
 
-CREATE INDEX idx_accounts_user_name ON accounts (user_name);
-CREATE INDEX idx_accounts_email ON accounts (email);
+-- Make sure the uuid-ossp module is available
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Insert sample data
+INSERT INTO public.accounts (id, user_name, password, email, created_at, updated_at, created_by, updated_by)
+VALUES
+    (public.uuid_generate_v4(), 'john_doe', 'johnspassword', 'johndoe@example.com', '2023-01-01', '2023-01-02', 'john_doe', 'john_doe'),
+    (public.uuid_generate_v4(), 'jane_doe', 'janespassword', 'janedoe@example.com', '2023-01-03', '2023-01-04', 'john_doe', 'john_doe'),
+    (public.uuid_generate_v4(), 'alex_smith', 'alexspassword', 'alexsmith@example.com', '2023-01-05', '2023-01-06', 'john_doe', 'john_doe');
 
-INSERT INTO accounts (id, created_at, updated_at, user_name, password, email) VALUES ('b079aab5-2b70-4cfc-bbe4-e1e23075198d', '2023-12-19 04:07:44.120121', '2023-12-19 04:07:44.120121', 'sBGBAdryOn', 'nDkBYeISoS', 'RJOFL@example.com');
-INSERT INTO accounts (id, created_at, updated_at, user_name, password, email) VALUES ('0f0d96e0-9f6c-4884-aa80-67e9d555fbea', '2023-12-19 04:07:44.120192', '2023-12-19 04:07:44.120192', 'wNcytbdkdC', 'RZeFJikrzy', 'tEbyC@example.com');
-INSERT INTO accounts (id, created_at, updated_at, user_name, password, email) VALUES ('aa3a8ebe-3613-4810-909c-1ca582a4d460', '2023-12-19 04:07:44.120234', '2023-12-19 04:07:44.120234', 'SjndEUpxXn', 'OymnopXUcR', 'WZBlz@example.com');
-INSERT INTO accounts (id, created_at, updated_at, user_name, password, email) VALUES ('090cff7a-3ae7-4e4b-8746-7bd492ab093d', '2023-12-19 04:07:44.120261', '2023-12-19 04:07:44.120261', 'UJMPcXdliH', 'bRLoJjAphz', 'DmPZB@example.com');
-INSERT INTO accounts (id, created_at, updated_at, user_name, password, email) VALUES ('0e0946c5-3b19-49ce-ae48-f1f458bf48ef', '2023-12-19 04:07:44.120307', '2023-12-19 04:07:44.120307', 'sjohCyTrTi', 'TwHSrpgkNp', 'WvJjG@example.com');
 
