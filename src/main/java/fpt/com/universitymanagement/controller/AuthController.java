@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -29,10 +27,10 @@ public class AuthController {
         this.service = service;
     }
     
-    @GetMapping("/google")
-    public OAuth2User loginWithGoogle(@AuthenticationPrincipal OAuth2User principal) {
-        return principal;
-    }
+//    @GetMapping("/google")
+//    public OAuth2User loginWithGoogle(@AuthenticationPrincipal OAuth2User principal) {
+//        return principal;
+//    }
     
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
     
