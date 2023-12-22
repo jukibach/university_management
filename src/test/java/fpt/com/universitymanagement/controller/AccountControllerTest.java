@@ -31,15 +31,6 @@ class AccountControllerTest {
     @MockBean
     private AccountService service;
     
-    
-    @Test
-    @WithMockUser(username="spring")
-    void testHelloWorld() throws Exception {
-        this.mockMvc.perform(get("/v1/api/accounts/hello-world"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello"));
-    }
-    
     @Test
     @WithMockUser(username="spring")
     void testGetAllAccounts() throws Exception {
