@@ -10,7 +10,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "accounts", schema = "account")
+@Table(name = "accounts", schema = "account",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "user_name"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class Account extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

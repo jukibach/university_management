@@ -4,9 +4,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE account.accounts
 (
     id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_name  VARCHAR(255) NOT NULL,
+    user_name  VARCHAR(255) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
-    email      VARCHAR(255) NOT NULL,
+    email      VARCHAR(255) NOT NULL UNIQUE,
     activated  BOOLEAN      NOT NULL,
     created_at DATE         NOT NULL,
     updated_at DATE,
@@ -56,7 +56,18 @@ CREATE TABLE account.role_permission
     permission_id UUID REFERENCES account.permissions (id)
 );
 
--- Make sure the uuid-ossp module is available
+CREATE TABLE account.refresh_token
+(
+    id          UUID PRIMARY KEY,
+    account_id  UUID,
+    token       VARCHAR(255) NOT NULL UNIQUE,
+    expiry_date TIMESTAMP    NOT NULL,
+    created_at  DATE         NOT NULL,
+    updated_at  DATE,
+    created_by  VARCHAR(255) NOT NULL,
+    updated_by  VARCHAR(255),
+    FOREIGN KEY (account_id) REFERENCES account.accounts (id)
+);
 
 -- Insert sample data
 INSERT INTO account.accounts (user_name, password, email, created_at, created_by, activated)
