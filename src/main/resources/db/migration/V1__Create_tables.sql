@@ -60,11 +60,13 @@ CREATE TABLE account.role_permission
 
 -- Insert sample data
 INSERT INTO account.accounts (user_name, password, email, created_at, created_by, activated)
-VALUES ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com', '2023-01-02',
+VALUES ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com',
+        '2023-01-02',
         'john_doe', TRUE),
        ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2', 'janedoe@example.com', '2023-01-04',
         'john_doe', TRUE),
-       ('alex_smith', '$2a$12$R.AMxKQntUYWOAQaRl0RDOLcdPW9OUHPSBkG64cVo6LCqtbNqYDhC', 'alexsmith@example.com', '2023-01-06',
+       ('alex_smith', '$2a$12$R.AMxKQntUYWOAQaRl0RDOLcdPW9OUHPSBkG64cVo6LCqtbNqYDhC', 'alexsmith@example.com',
+        '2023-01-06',
         'john_doe', TRUE),
        ('dathq', '$2a$12$GhIDOaYoPrmv5f/bdacbmuR4zs7yFcyfMC15mkJnfJMuVWXO1ZHHW', 'dathq10@fpt.com', '2023-01-06',
         'dungnc', TRUE);
@@ -77,26 +79,47 @@ INSERT INTO account.permissions (name, description, created_at, created_by)
 VALUES ('Read', 'Read Permission', CURRENT_DATE, 'john_doe'),
        ('Write', 'Write Permission', CURRENT_DATE, 'john_doe');
 
-INSERT INTO account.role_account (role_id, account_id) SELECT r.id, a.id
-FROM account.roles r, account.accounts a
-WHERE r.name = 'ROLE_ADMIN' AND a.user_name = 'john_doe';
-INSERT INTO account.role_account (role_id, account_id) SELECT r.id, a.id
-FROM account.roles r, account.accounts a
-WHERE r.name = 'ROLE_USER' AND a.user_name = 'alex_smith';
-INSERT INTO account.role_account (role_id, account_id) SELECT r.id, a.id
-FROM account.roles r, account.accounts a
-WHERE r.name = 'ROLE_USER' AND a.user_name = 'jane_doe';
-INSERT INTO account.role_account (role_id, account_id) SELECT r.id, a.id
-FROM account.roles r, account.accounts a
-WHERE r.name = 'ROLE_ADMIN' AND a.user_name = 'dathq';
+INSERT INTO account.role_account (role_id, account_id)
+SELECT r.id, a.id
+FROM account.roles r,
+     account.accounts a
+WHERE r.name = 'ROLE_ADMIN'
+  AND a.user_name = 'john_doe';
+INSERT INTO account.role_account (role_id, account_id)
+SELECT r.id, a.id
+FROM account.roles r,
+     account.accounts a
+WHERE r.name = 'ROLE_USER'
+  AND a.user_name = 'alex_smith';
+INSERT INTO account.role_account (role_id, account_id)
+SELECT r.id, a.id
+FROM account.roles r,
+     account.accounts a
+WHERE r.name = 'ROLE_USER'
+  AND a.user_name = 'jane_doe';
+INSERT INTO account.role_account (role_id, account_id)
+SELECT r.id, a.id
+FROM account.roles r,
+     account.accounts a
+WHERE r.name = 'ROLE_ADMIN'
+  AND a.user_name = 'dathq';
 
 -- Similar approach for role_permission
-INSERT INTO account.role_permission (role_id, permission_id) SELECT r.id, p.id
-FROM account.roles r, account.permissions p
-WHERE r.name = 'ROLE_ADMIN' AND p.name = 'Read';
-INSERT INTO account.role_permission (role_id, permission_id) SELECT r.id, p.id
-FROM account.roles r, account.permissions p
-WHERE r.name = 'ROLE_ADMIN' AND p.name = 'Write';
-INSERT INTO account.role_permission (role_id, permission_id) SELECT r.id, p.id
-FROM account.roles r, account.permissions p
-WHERE r.name = 'ROLE_USER' AND p.name = 'Read';
+INSERT INTO account.role_permission (role_id, permission_id)
+SELECT r.id, p.id
+FROM account.roles r,
+     account.permissions p
+WHERE r.name = 'ROLE_ADMIN'
+  AND p.name = 'Read';
+INSERT INTO account.role_permission (role_id, permission_id)
+SELECT r.id, p.id
+FROM account.roles r,
+     account.permissions p
+WHERE r.name = 'ROLE_ADMIN'
+  AND p.name = 'Write';
+INSERT INTO account.role_permission (role_id, permission_id)
+SELECT r.id, p.id
+FROM account.roles r,
+     account.permissions p
+WHERE r.name = 'ROLE_USER'
+  AND p.name = 'Read';
