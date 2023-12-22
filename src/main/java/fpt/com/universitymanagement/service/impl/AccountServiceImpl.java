@@ -5,6 +5,7 @@ import fpt.com.universitymanagement.dto.AccountResponse;
 import fpt.com.universitymanagement.dto.JwtResponse;
 import fpt.com.universitymanagement.dto.LoginRequest;
 import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.RefreshToken;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.service.AccountService;
 import org.modelmapper.ModelMapper;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,11 +26,13 @@ public class AccountServiceImpl implements AccountService {
     private final JwtUtils jwtUtils;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper = new ModelMapper();
+    private final RefreshTokenServiceImpl refreshTokenServiceImpl;
     
-    public AccountServiceImpl(AccountRepository accountRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+    public AccountServiceImpl(AccountRepository accountRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils, RefreshTokenServiceImpl refreshTokenServiceImpl) {
         this.accountRepository = accountRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
+        this.refreshTokenServiceImpl = refreshTokenServiceImpl;
     }
     
     @Override
@@ -60,10 +64,13 @@ public class AccountServiceImpl implements AccountService {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
+        RefreshToken refreshToken = refreshTokenServiceImpl.createRefreshToken(userDetails.getId(), loginRequest.getUserName());
+        
         return new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles);
+                roles,
+                refreshToken.getToken());
     }
 }

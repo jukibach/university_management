@@ -1,6 +1,5 @@
 package fpt.com.universitymanagement.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +8,21 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class JwtResponse {
     private String token;
     private UUID id;
     private String userName;
     private String email;
     private List<String> role;
+    private String type = "Bearer";
+    private String refreshToken;
+    
+    public JwtResponse(String token, UUID id, String userName, String email, List<String> role, String refreshToken) {
+        this.token = token;
+        this.id = id;
+        this.userName = userName;
+        this.email = email;
+        this.role = role;
+        this.refreshToken = refreshToken;
+    }
 }
