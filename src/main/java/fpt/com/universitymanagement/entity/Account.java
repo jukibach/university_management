@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "accounts", schema="public")
+@Table(name = "accounts", schema = "account")
 public class Account extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,4 +22,8 @@ public class Account extends BaseEntity {
     private String password;
     @Column(name = "email", nullable = false)
     private String email;
+    @Column(name = "activated", nullable = false)
+    private boolean activated;
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private Set<RoleAccount> roleAccounts;
 }
