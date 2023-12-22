@@ -71,7 +71,10 @@ CREATE TABLE account.refresh_token
 
 -- Insert sample data
 INSERT INTO account.accounts (user_name, password, email, created_at, created_by, activated)
-VALUES ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com',
+VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW', 'admin@gmail.com',
+        '2023-01-02',
+        'admin', TRUE),
+       ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com',
         '2023-01-02',
         'dungnc', TRUE),
        ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2', 'janedoe@example.com', '2023-01-04',
@@ -96,6 +99,12 @@ FROM account.roles r,
      account.accounts a
 WHERE r.name = 'ROLE_ADMIN'
   AND a.user_name = 'dungnc';
+INSERT INTO account.role_account (role_id, account_id)
+SELECT r.id, a.id
+FROM account.roles r,
+     account.accounts a
+WHERE r.name = 'ROLE_ADMIN'
+  AND a.user_name = 'admin';
 INSERT INTO account.role_account (role_id, account_id)
 SELECT r.id, a.id
 FROM account.roles r,

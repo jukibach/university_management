@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,12 +66,17 @@ public class AccountServiceImpl implements AccountService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
         RefreshToken refreshToken = refreshTokenServiceImpl.createRefreshToken(userDetails.getId(), loginRequest.getUserName());
-        
         return new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles,
                 refreshToken.getToken());
+    }
+    
+    @Override
+    public AccountResponse switchAccountStatus(String userName, boolean activate) {
+        Optional<Account> account = accountRepository.findByUserName(userName);
+        return account.map(this::convertToDto).orElse(null);
     }
 }

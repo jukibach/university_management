@@ -52,14 +52,13 @@ public class WebSecurityConfig {
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        /* checking Authorization */
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/v1/api/auth/**", "/swagger-ui/**", "/v3/**")
                         .permitAll()
-                        .anyRequest()
+                        .requestMatchers("/v1/api/accounts/**")
                         .authenticated())
         ;
         http.authenticationProvider(authenticationProvider());

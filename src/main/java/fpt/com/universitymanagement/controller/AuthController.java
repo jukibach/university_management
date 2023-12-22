@@ -1,9 +1,6 @@
 package fpt.com.universitymanagement.controller;
 
-import fpt.com.universitymanagement.dto.JwtResponse;
-import fpt.com.universitymanagement.dto.LoginRequest;
-import fpt.com.universitymanagement.dto.TokenRefreshRequest;
-import fpt.com.universitymanagement.dto.TokenRefreshResponse;
+import fpt.com.universitymanagement.dto.*;
 import fpt.com.universitymanagement.service.AccountService;
 import fpt.com.universitymanagement.service.RefreshTokenService;
 import io.github.bucket4j.Bandwidth;
@@ -56,6 +53,11 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         return ResponseEntity.ok(refreshTokenService.refreshToken(request));
+    }
+    
+    @PostMapping("/activation")
+    public ResponseEntity<AccountResponse> switchAccountStatus(String userName, boolean request) {
+        return ResponseEntity.ok(service.switchAccountStatus(userName, request));
     }
     
     private Bucket createNewBucket(String s) {

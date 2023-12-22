@@ -1,6 +1,7 @@
 package fpt.com.universitymanagement.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,7 @@ public class Account extends BaseEntity {
     private String userName;
     @Column(name = "password", nullable = false)
     private String password;
+    @Email
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "activated", nullable = false)
