@@ -23,10 +23,9 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtUtils jwtUtils;
     
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, AuthEntryPointJwt unauthorizedHandler) {
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
-        this.unauthorizedHandler = unauthorizedHandler;
     }
     
     @Bean
