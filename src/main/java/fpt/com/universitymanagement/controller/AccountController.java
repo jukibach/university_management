@@ -1,10 +1,9 @@
 package fpt.com.universitymanagement.controller;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.dto.AccountResponse;
 import fpt.com.universitymanagement.service.AccountService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,13 +18,9 @@ public class AccountController {
         this.service = service;
     }
     
-    @GetMapping("hello-world")
-    public String helloWorld() {
-        return "Hello";
-    }
-    
     @GetMapping
-    public List<Account> getAllAccounts() {
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<AccountResponse> getAllAccounts() {
         return service.getAllAccounts();
     }
 }
