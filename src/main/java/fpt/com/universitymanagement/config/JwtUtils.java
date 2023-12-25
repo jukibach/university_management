@@ -29,9 +29,13 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(generateExpirationDate())
                 .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+    
+    public Date generateExpirationDate() {
+        return new Date((new Date()).getTime() + jwtExpirationMs);
     }
     
     public String generateTokenFromUsername(String username) {

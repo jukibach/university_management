@@ -2,6 +2,7 @@ package fpt.com.universitymanagement.service.impl;
 
 import fpt.com.universitymanagement.config.JwtUtils;
 import fpt.com.universitymanagement.dto.AccountResponse;
+import fpt.com.universitymanagement.dto.ActivationRequest;
 import fpt.com.universitymanagement.dto.JwtResponse;
 import fpt.com.universitymanagement.dto.LoginRequest;
 import fpt.com.universitymanagement.entity.Account;
@@ -66,6 +67,7 @@ public class AccountServiceImpl implements AccountService {
                 .toList();
         RefreshToken refreshToken = refreshTokenServiceImpl.createRefreshToken(userDetails.getId(), loginRequest.getUserName());
         return new JwtResponse(jwt,
+                jwtUtils.generateExpirationDate().toString(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
@@ -74,15 +76,12 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
-    public AccountResponse switchAccountStatus(String userName, boolean activate) {
-        Optional<Account> account = accountRepository.findByUserName(userName);
+    public AccountResponse switchAccountStatus(ActivationRequest request) {
+        Optional<Account> account = accountRepository.findByUserName(request.getUserName());
         if (account.isEmpty()) {
             return null;
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String principal = authentication.getName();
-        account.get().setActivated(activate);
-        account.get().setUpdatedBy(principal);
+        account.get().setActivated(request.getIsActivated());
         account = Optional.of(accountRepository.save(account.get()));
         return account.map(this::convertToDto).orElse(null);
     }
