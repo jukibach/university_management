@@ -49,10 +49,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshToken.setAccount(account.get());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
-        LocalDate currentDate = LocalDate.now(); // Current date based on the system clock and default time-zone
-        refreshToken.setCreatedAt(currentDate);
+        refreshToken.setCreatedAt(LocalDate.now());
         refreshToken.setCreatedBy(userName);
-        
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }
