@@ -8,8 +8,8 @@ CREATE TABLE account.accounts
     password   VARCHAR(255) NOT NULL,
     email      VARCHAR(255) NOT NULL UNIQUE,
     activated  BOOLEAN      NOT NULL,
-    created_at DATE         NOT NULL,
-    updated_at DATE,
+    created_at TIMESTAMP    NOT NULL,
+    updated_at TIMESTAMP,
     created_by VARCHAR(255) NOT NULL,
     updated_by VARCHAR(255)
 );
@@ -21,8 +21,8 @@ CREATE TABLE account.permissions
     id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name        VARCHAR(255) NOT NULL,
     description TEXT,
-    created_at  DATE         NOT NULL,
-    updated_at  DATE,
+    created_at  TIMESTAMP    NOT NULL,
+    updated_at  TIMESTAMP,
     created_by  VARCHAR(255) NOT NULL,
     updated_by  VARCHAR(255)
 );
@@ -34,8 +34,8 @@ CREATE TABLE account.roles
     id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name        VARCHAR(255) NOT NULL,
     description TEXT,
-    created_at  DATE         NOT NULL,
-    updated_at  DATE,
+    created_at  TIMESTAMP    NOT NULL,
+    updated_at  TIMESTAMP,
     created_by  VARCHAR(255) NOT NULL,
     updated_by  VARCHAR(255)
 );
@@ -62,8 +62,8 @@ CREATE TABLE account.refresh_token
     account_id  UUID,
     token       VARCHAR(255) NOT NULL UNIQUE,
     expiry_date TIMESTAMP    NOT NULL,
-    created_at  DATE         NOT NULL,
-    updated_at  DATE,
+    created_at  TIMESTAMP    NOT NULL,
+    updated_at  TIMESTAMP,
     created_by  VARCHAR(255) NOT NULL,
     updated_by  VARCHAR(255),
     FOREIGN KEY (account_id) REFERENCES account.accounts (id)
@@ -72,26 +72,30 @@ CREATE TABLE account.refresh_token
 -- Insert sample data
 INSERT INTO account.accounts (user_name, password, email, created_at, created_by, activated)
 VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW', 'admin@gmail.com',
-        '2023-01-02',
+        CURRENT_TIMESTAMP,
         'admin', TRUE),
+       ('user', '$2a$12$aXiUY2khzWepfiOU3ZejJ.GvQu83JC3m8fzfTOaEQfQTjSfthyQWy', 'user@gmail.com',
+        CURRENT_TIMESTAMP,
+        'user', TRUE),
        ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com',
-        '2023-01-02',
+        CURRENT_TIMESTAMP,
         'dungnc', TRUE),
-       ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2', 'janedoe@example.com', '2023-01-04',
+       ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2', 'janedoe@example.com',
+        CURRENT_TIMESTAMP,
         'dungnc', TRUE),
        ('alex_smith', '$2a$12$R.AMxKQntUYWOAQaRl0RDOLcdPW9OUHPSBkG64cVo6LCqtbNqYDhC', 'alexsmith@example.com',
-        '2023-01-06',
+        CURRENT_TIMESTAMP,
         'dungnc', TRUE),
-       ('dathq', '$2a$12$GhIDOaYoPrmv5f/bdacbmuR4zs7yFcyfMC15mkJnfJMuVWXO1ZHHW', 'dathq10@fpt.com', '2023-01-06',
+       ('dathq', '$2a$12$GhIDOaYoPrmv5f/bdacbmuR4zs7yFcyfMC15mkJnfJMuVWXO1ZHHW', 'dathq10@fpt.com', CURRENT_TIMESTAMP,
         'dungnc', TRUE);
 
 INSERT INTO account.roles (name, description, created_at, created_by)
-VALUES ('ROLE_ADMIN', 'Administrator Role', CURRENT_DATE, 'dungnc'),
-       ('ROLE_USER', 'User Role', CURRENT_DATE, 'dungnc');
+VALUES ('ROLE_ADMIN', 'Administrator Role', CURRENT_TIMESTAMP, 'dungnc'),
+       ('ROLE_USER', 'User Role', CURRENT_TIMESTAMP, 'dungnc');
 
 INSERT INTO account.permissions (name, description, created_at, created_by)
-VALUES ('Read', 'Read Permission', CURRENT_DATE, 'dungnc'),
-       ('Write', 'Write Permission', CURRENT_DATE, 'dungnc');
+VALUES ('Read', 'Read Permission', CURRENT_TIMESTAMP, 'dungnc'),
+       ('Write', 'Write Permission', CURRENT_TIMESTAMP, 'dungnc');
 
 INSERT INTO account.role_account (role_id, account_id)
 SELECT r.id, a.id
@@ -111,6 +115,12 @@ FROM account.roles r,
      account.accounts a
 WHERE r.name = 'ROLE_USER'
   AND a.user_name = 'alex_smith';
+INSERT INTO account.role_account (role_id, account_id)
+SELECT r.id, a.id
+FROM account.roles r,
+     account.accounts a
+WHERE r.name = 'ROLE_USER'
+  AND a.user_name = 'user';
 INSERT INTO account.role_account (role_id, account_id)
 SELECT r.id, a.id
 FROM account.roles r,

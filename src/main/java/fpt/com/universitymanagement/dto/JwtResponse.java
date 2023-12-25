@@ -10,6 +10,7 @@ import java.util.UUID;
 @Setter
 public class JwtResponse {
     private String token;
+    private String tokenExpiration;
     private UUID id;
     private String userName;
     private String email;
@@ -17,8 +18,9 @@ public class JwtResponse {
     private String type = "Bearer";
     private String refreshToken;
     
-    public JwtResponse(String token, UUID id, String userName, String email, List<String> role, String refreshToken) {
+    public JwtResponse(String token, String tokenExpiration, UUID id, String userName, String email, List<String> role, String refreshToken) {
         this.token = token;
+        this.tokenExpiration = tokenExpiration;
         this.id = id;
         this.userName = userName;
         this.email = email;

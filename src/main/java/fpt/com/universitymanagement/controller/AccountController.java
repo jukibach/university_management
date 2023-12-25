@@ -2,6 +2,7 @@ package fpt.com.universitymanagement.controller;
 
 import fpt.com.universitymanagement.dto.AccountResponse;
 import fpt.com.universitymanagement.service.AccountService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class AccountController {
     
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public List<AccountResponse> getAllAccounts() {
         return service.getAllAccounts();
     }

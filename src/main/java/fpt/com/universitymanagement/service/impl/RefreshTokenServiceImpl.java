@@ -1,7 +1,6 @@
 package fpt.com.universitymanagement.service.impl;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,11 +48,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshToken.setAccount(account.get());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setCreatedAt(LocalDate.now());
-        refreshToken.setCreatedBy(userName);
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }
+    
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
@@ -81,7 +79,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                     String token = jwtUtils.generateTokenFromUsername(account.getUserName());
                     return new TokenRefreshResponse(token, requestRefreshToken);
                 })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                .orElse(null);
     }
 }
