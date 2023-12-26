@@ -9,8 +9,8 @@ import java.util.UUID;
 @Getter
 @Setter
 public class JwtResponse {
-    private String token;
-    private String tokenExpiration;
+    private String accessToken;
+    private String accessTokenExpiration;
     private UUID id;
     private String userName;
     private String email;
@@ -18,9 +18,9 @@ public class JwtResponse {
     private String type = "Bearer";
     private String refreshToken;
     
-    public JwtResponse(String token, String tokenExpiration, UUID id, String userName, String email, List<String> role, String refreshToken) {
-        this.token = token;
-        this.tokenExpiration = tokenExpiration;
+    public JwtResponse(String token, String accessTokenExpiration, UUID id, String userName, String email, List<String> role, String refreshToken) {
+        this.accessToken = token;
+        this.accessTokenExpiration = accessTokenExpiration;
         this.id = id;
         this.userName = userName;
         this.email = email;
