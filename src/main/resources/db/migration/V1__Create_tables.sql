@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE account.accounts
 (
-    id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id         BIGSERIAL PRIMARY KEY,
     user_name  VARCHAR(255) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
     email      VARCHAR(255) NOT NULL UNIQUE,
@@ -18,7 +18,7 @@ CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
 
 CREATE TABLE account.permissions
 (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     description TEXT,
     created_at  TIMESTAMP    NOT NULL,
@@ -31,7 +31,7 @@ CREATE INDEX idx_permission_name ON account.permissions (name);
 
 CREATE TABLE account.roles
 (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     description TEXT,
     created_at  TIMESTAMP    NOT NULL,
@@ -44,22 +44,22 @@ CREATE INDEX idx_role_name ON account.roles (name);
 
 CREATE TABLE account.role_account
 (
-    id         SERIAL PRIMARY KEY,
-    role_id    UUID REFERENCES account.roles (id),
-    account_id UUID REFERENCES account.accounts (id)
+    id         BIGSERIAL PRIMARY KEY,
+    role_id    BIGSERIAL REFERENCES account.roles (id),
+    account_id BIGSERIAL REFERENCES account.accounts (id)
 );
 
 CREATE TABLE account.role_permission
 (
-    id            SERIAL PRIMARY KEY,
-    role_id       UUID REFERENCES account.roles (id),
-    permission_id UUID REFERENCES account.permissions (id)
+    id            BIGSERIAL PRIMARY KEY,
+    role_id       BIGSERIAL REFERENCES account.roles (id),
+    permission_id BIGSERIAL REFERENCES account.permissions (id)
 );
 
 CREATE TABLE account.refresh_token
 (
-    id          UUID PRIMARY KEY,
-    account_id  UUID,
+    id          BIGSERIAL PRIMARY KEY,
+    account_id  BIGSERIAL,
     token       VARCHAR(255) NOT NULL UNIQUE,
     expiry_date TIMESTAMP    NOT NULL,
     created_at  TIMESTAMP    NOT NULL,

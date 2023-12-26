@@ -3,7 +3,6 @@ package fpt.com.universitymanagement.service.impl;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import fpt.com.universitymanagement.entity.Account;
 import lombok.Getter;
@@ -19,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
     
-    private final UUID id;
+    private final long id;
     
     private final String username;
     
@@ -30,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
     
     private final Collection<? extends GrantedAuthority> authorities;
     
-    public UserDetailsImpl(UUID id, String username, String email, String password,
+    public UserDetailsImpl(long id, String username, String email, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
