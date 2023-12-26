@@ -23,6 +23,11 @@ import java.util.List;
         })
 public class Course extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     @Column(nullable = false)
     private String code;
 

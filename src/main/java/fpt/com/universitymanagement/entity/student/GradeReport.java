@@ -16,6 +16,11 @@ import lombok.Setter;
 @Table(name = "grade_report", schema = "student")
 public class GradeReport extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     private double pointProcess;
 
     private double pointEndCourse;

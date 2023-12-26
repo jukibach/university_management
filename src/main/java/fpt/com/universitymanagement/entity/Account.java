@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
+import java.util.UUID;
 
 
 @Getter
@@ -17,6 +18,11 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         })
 public class Account extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "user_name", nullable = false)
     private String userName;

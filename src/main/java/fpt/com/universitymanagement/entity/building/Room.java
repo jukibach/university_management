@@ -14,7 +14,13 @@ import java.util.List;
 @Entity
 @Table(name = "rooms", schema = "building")
 public class Room extends BaseEntity {
-    @Column(nullable = false, unique = true)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
+    @Column(name = "name",nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)

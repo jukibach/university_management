@@ -20,6 +20,11 @@ import java.util.List;
 @Table(name = "exams", schema = "curriculum")
 public class Exam extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     @Column(nullable = false)
     private String name;
 

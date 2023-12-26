@@ -15,15 +15,20 @@ import java.util.List;
 @Table(name = "buildings", schema = "building")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Building extends BaseEntity {
+public class Building extends BaseEntity{
 
-    @Column(nullable = false,unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
+    @Column(name = "code", nullable = false,unique = true)
     private String code;
 
-    @Column(nullable = false,unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "details",nullable = false)
     private String details;
 
 

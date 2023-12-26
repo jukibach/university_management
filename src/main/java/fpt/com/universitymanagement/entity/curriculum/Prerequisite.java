@@ -17,6 +17,11 @@ import java.util.List;
 @Table(name = "prerequisites", schema = "curriculum")
 public class Prerequisite extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     private String name;
 
     private String description;

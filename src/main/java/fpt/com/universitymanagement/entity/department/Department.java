@@ -19,6 +19,11 @@ import java.util.Set;
 @Table(name = "departments", schema = "department")
 public class Department extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     @Column(nullable = false)
     private String name;
 

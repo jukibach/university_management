@@ -19,6 +19,11 @@ import java.util.List;
 @Table(name = "semester", schema = "curriculum")
 public class Semester extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     private String name;
 
     private LocalDate startDate;
