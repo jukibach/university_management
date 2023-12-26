@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.entity.faculty;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.curriculum.Exam;
 import fpt.com.universitymanagement.entity.curriculum.Session;

@@ -1,5 +1,6 @@
-package fpt.com.universitymanagement.entity;
+package fpt.com.universitymanagement.entity.account;
 
+import fpt.com.universitymanagement.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "refresh_token", schema = "account")
-public class RefreshToken extends BaseEntity{
+public class RefreshToken extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)

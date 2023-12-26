@@ -21,13 +21,13 @@ public class BaseEntity {
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
     
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
-    
     @CreatedBy
     @Column(name = "created_by", updatable = false, nullable = false)
     private String createdBy;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
     
     @LastModifiedBy
     @Column(name = "updated_by")

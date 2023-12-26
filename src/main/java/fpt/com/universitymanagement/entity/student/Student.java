@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.entity.student;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.faculty.Classes;
 import fpt.com.universitymanagement.entity.timetable.TimeTable;
