@@ -4,12 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
 public class AccountResponse {
-    private UUID id;
+    private Long id;
     private String userName;
     private String email;
     private boolean isActivated;

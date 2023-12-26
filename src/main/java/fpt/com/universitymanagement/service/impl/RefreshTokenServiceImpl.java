@@ -24,11 +24,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final JwtUtils jwtUtils;
     private final RefreshTokenRepository refreshTokenRepository;
     
-    private final AccountRepository repository;
+    private final AccountRepository accountRepository;
     
-    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, AccountRepository repository, JwtUtils jwtUtils) {
+    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, AccountRepository accountRepository, JwtUtils jwtUtils) {
         this.refreshTokenRepository = refreshTokenRepository;
-        this.repository = repository;
+        this.accountRepository = accountRepository;
         this.jwtUtils = jwtUtils;
     }
     
@@ -40,7 +40,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public RefreshToken createRefreshToken(long accountId, String userName) {
         RefreshToken refreshToken = new RefreshToken();
-        Optional<Account> account = repository.findById(accountId);
+        Optional<Account> account = accountRepository.findById(accountId);
         if (account.isEmpty()) {
             return null;
         }
@@ -61,14 +61,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return token;
     }
     
-    public void deleteByAccountId(long accountId) {
-        Optional<Account> account = repository.findById(accountId);
-        if (account.isEmpty()) {
-            return;
-        }
-        refreshTokenRepository.deleteByAccount(account.get());
-    }
-    
     @Override
     public TokenRefreshResponse refreshToken(TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
@@ -80,5 +72,18 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                     return new TokenRefreshResponse(token, requestRefreshToken);
                 })
                 .orElse(null);
+    }
+    
+    @Override
+    public void deleteToken(RefreshToken token) {
+        refreshTokenRepository.delete(token);
+    }
+    
+    private void deleteByAccountId(long accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if (account.isEmpty()) {
+            return;
+        }
+        refreshTokenRepository.deleteByAccount(account.get());
     }
 }

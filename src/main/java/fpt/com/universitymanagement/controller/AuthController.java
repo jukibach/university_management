@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .body("You have exhausted your API request quota. Try again in " + waitForRefill + " seconds.");
         }
+    }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<Object> logout(HttpServletRequest request) {
+        service.logout(request);
+        return new ResponseEntity<>("Logout", HttpStatus.NO_CONTENT);
     }
     
     @Operation(summary = "Activate/Deactivate an account")

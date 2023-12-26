@@ -3,15 +3,16 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE account.accounts
 (
-    id         BIGSERIAL PRIMARY KEY,
-    user_name  VARCHAR(255) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL,
-    email      VARCHAR(255) NOT NULL UNIQUE,
-    activated  BOOLEAN      NOT NULL,
-    created_at TIMESTAMP    NOT NULL,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(255) NOT NULL,
-    updated_by VARCHAR(255)
+    id           BIGSERIAL PRIMARY KEY,
+    user_name    VARCHAR(255) NOT NULL UNIQUE,
+    password     VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) NOT NULL UNIQUE,
+    access_token VARCHAR(255) UNIQUE,
+    activated    BOOLEAN      NOT NULL,
+    created_at   TIMESTAMP    NOT NULL,
+    updated_at   TIMESTAMP,
+    created_by   VARCHAR(255) NOT NULL,
+    updated_by   VARCHAR(255)
 );
 
 CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
