@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "timetable", schema = "timetable")
+@Table(name = "timetable_session", schema = "timetable")
 public class TimeTableSession {
 
     @Id
@@ -26,4 +26,6 @@ public class TimeTableSession {
     @ManyToOne
     @JoinColumn(name = "session_id",nullable = false)
     private Session session;
+
+
 }

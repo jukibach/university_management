@@ -31,4 +31,6 @@ public class Account extends BaseEntity {
     private boolean activated;
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private Set<RoleAccount> roleAccounts;
+    @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+    private PasswordResetToken passwordResetToken;
 }

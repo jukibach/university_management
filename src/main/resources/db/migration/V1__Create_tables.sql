@@ -16,6 +16,20 @@ CREATE TABLE account.accounts
 
 CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
 
+CREATE TABLE account.password_reset_token
+(
+    id      BIGSERIAL PRIMARY KEY,
+    token   VARCHAR(255) NOT NULL,
+    expiry_date TIMESTAMP,
+    created_at  TIMESTAMP ,
+    updated_at  TIMESTAMP,
+    created_by  VARCHAR(255),
+    updated_by  VARCHAR(255),
+    account_id BIGSERIAL REFERENCES account.accounts (id)
+
+);
+
+
 CREATE TABLE account.permissions
 (
     id          BIGSERIAL PRIMARY KEY,
@@ -77,7 +91,7 @@ VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW',
        ('user', '$2a$12$aXiUY2khzWepfiOU3ZejJ.GvQu83JC3m8fzfTOaEQfQTjSfthyQWy', 'user@gmail.com',
         CURRENT_TIMESTAMP,
         'user', TRUE),
-       ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com',
+       ('VuLH26', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'huuvu110799@gmail.com',
         CURRENT_TIMESTAMP,
         'dungnc', TRUE),
        ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2', 'janedoe@example.com',
