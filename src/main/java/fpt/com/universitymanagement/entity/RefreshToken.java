@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,8 +12,9 @@ import java.util.UUID;
 @Table(name = "refresh_token", schema = "account")
 public class RefreshToken extends BaseEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private long id;
     
     @OneToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id")

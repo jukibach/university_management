@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "roles", schema = "account")
@@ -13,9 +12,9 @@ import java.util.UUID;
 @Setter
 public class Role extends BaseEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private long id;
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "description")

@@ -38,7 +38,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     
     @Override
     @Transactional
-    public RefreshToken createRefreshToken(UUID accountId, String userName) {
+    public RefreshToken createRefreshToken(long accountId, String userName) {
         RefreshToken refreshToken = new RefreshToken();
         Optional<Account> account = repository.findById(accountId);
         if (account.isEmpty()) {
@@ -61,7 +61,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return token;
     }
     
-    public void deleteByAccountId(UUID accountId) {
+    public void deleteByAccountId(long accountId) {
         Optional<Account> account = repository.findById(accountId);
         if (account.isEmpty()) {
             return;

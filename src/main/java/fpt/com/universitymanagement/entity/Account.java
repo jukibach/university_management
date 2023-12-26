@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,9 +17,9 @@ import java.util.UUID;
         })
 public class Account extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private long id;
     @Column(name = "user_name", nullable = false)
     private String userName;
     @Column(name = "password", nullable = false)
