@@ -8,16 +8,24 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
 import io.github.bucket4j.local.LocalBucketBuilder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,6 +44,12 @@ public class AuthController {
     
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
     
+    @Operation(summary = "Sign in by using username and password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Signed in successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+            }),
+            @ApiResponse(responseCode = "429", description = "Too many requests!")})
     @PostMapping("/login")
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         String key = loginRequest.getUserName();
@@ -54,13 +68,26 @@ public class AuthController {
         }
     }
     
+    @Operation(summary = "Activate/Deactivate an account")
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Changed status successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = AccountResponse.class))
+            })})
     @PostMapping("/active")
     public ResponseEntity<AccountResponse> switchAccountStatus(@RequestBody ActivationRequest request) {
         return ResponseEntity.ok(service.switchAccountStatus(request));
     }
     
+    @Operation(summary = "Refresh token for an account")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = TokenRefreshResponse.class))
+            }),
+            @ApiResponse(responseCode = "403", description = "Refresh token is not in database!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+            })})
     @PostMapping("/refresh-token")
     public ResponseEntity<Object> refreshToken(@Valid @RequestBody TokenRefreshRequest dto, WebRequest request) {
         TokenRefreshResponse token = refreshTokenService.refreshToken(dto);
@@ -78,5 +105,17 @@ public class AuthController {
         return new LocalBucketBuilder()
                 .addLimit(Bandwidth.simple(5, Duration.ofHours(1))) // Example: 5 requests per hour
                 .build();
+    }
+    
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }
