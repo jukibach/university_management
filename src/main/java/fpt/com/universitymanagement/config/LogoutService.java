@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.config;
 
-import fpt.com.universitymanagement.entity.RefreshToken;
+import fpt.com.universitymanagement.entity.account.RefreshToken;
 import fpt.com.universitymanagement.repository.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
