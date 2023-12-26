@@ -9,12 +9,16 @@ import fpt.com.universitymanagement.entity.Account;
 import fpt.com.universitymanagement.entity.RefreshToken;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.service.AccountService;
+import fpt.com.universitymanagement.specification.AccountSpecification;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,9 +40,10 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
-    public List<AccountResponse> getAllAccounts() {
-        List<Account> list = accountRepository.findAll();
-        return list.stream().map(this::convertToDto).toList();
+    public List<AccountResponse> getAllAccounts(Pageable pageable, String searchInput) {
+        AccountSpecification accountSpecification = new AccountSpecification(searchInput);
+        Page<Account> accounts =  accountRepository.findAll(accountSpecification, pageable);
+        return accounts.getContent().stream().map(this::convertToDto).toList();
     }
     
     public AccountResponse convertToDto(Account account) {
