@@ -13,11 +13,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +32,11 @@ import static fpt.com.universitymanagement.common.Constant.AUTH_CONTROLLER;
 @RestController
 @RequestMapping(AUTH_CONTROLLER)
 public class AuthController {
-    private final AccountService service;
+    private final AccountService accountService;
     private final RefreshTokenService refreshTokenService;
     
-    public AuthController(AccountService service, RefreshTokenService refreshTokenService) {
-        this.service = service;
+    public AuthController(AccountService accountService, RefreshTokenService refreshTokenService) {
+        this.accountService = accountService;
         this.refreshTokenService = refreshTokenService;
     }
     
@@ -59,7 +57,7 @@ public class AuthController {
         
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
-            LoginResponse loginResponse = service.authenticateUser(loginRequest);
+            LoginResponse loginResponse = accountService.authenticateUser(loginRequest);
             cache.remove(key);
             return ResponseEntity.ok(loginResponse);
         } else {
@@ -73,18 +71,6 @@ public class AuthController {
                             request.getDescription(false)
                     ));
         }
-    }
-    
-    @Operation(summary = "Activate/Deactivate an account")
-    @PreAuthorize("hasRole('ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Changed status successfully!", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = AccountResponse.class))
-            })})
-    @PostMapping("/active")
-    public ResponseEntity<AccountResponse> switchAccountStatus(@RequestBody ActivationRequest request) {
-        return ResponseEntity.ok(service.switchAccountStatus(request));
     }
     
     @Operation(summary = "Refresh token for an account")
