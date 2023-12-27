@@ -80,19 +80,18 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
-    public SignOutValidationResponse signOutValidation(SignOutValidationRequest signOutValidationRequest) {
-        SignOutValidationResponse signOutValidationResponse = new SignOutValidationResponse();
+    public Map<String, String> signOutValidation(SignOutValidationRequest signOutValidationRequest) {
+        Map<String, String> signOutValidationResponse = new HashMap<>();
         List<AccessToken> accessTokenList;
         if (signOutValidationRequest.isSignOut()) {
             accessTokenList = accessTokenRepository.findByAccount_Id(signOutValidationRequest.getAccountId());
             accessTokenList = accessTokenList.stream().filter(s -> !Objects.equals(s.getToken(), signOutValidationRequest.getAccessToken())).toList();
-            accessTokenRepository.deleteAll(accessTokenList);
-            signOutValidationResponse.setMessage("Deleted all tokens except the latest token");
+            signOutValidationResponse.put("message", "Deleted all tokens except the latest token");
         } else {
             accessTokenList = accessTokenRepository.findByExpiryDateBeforeAndAccount_Id(LocalDateTime.now(), signOutValidationRequest.getAccountId());
-            accessTokenRepository.deleteAll(accessTokenList);
-            signOutValidationResponse.setMessage("Deleted all expired tokens");
+            signOutValidationResponse.put("message", "Deleted all expired tokens");
         }
+        accessTokenRepository.deleteAll(accessTokenList);
         return signOutValidationResponse;
     }
     

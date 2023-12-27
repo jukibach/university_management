@@ -82,13 +82,13 @@ public class AuthController {
     }
     
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = SignOutValidationResponse.class))
+            @ApiResponse(responseCode = "200", description = "Signed out successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
             })})
     @Operation(summary = "Sign out all login sessions except the latest login session")
     @PostMapping("/sign-out-validation")
     public ResponseEntity<Object> validateSignOut(@Valid @RequestBody SignOutValidationRequest signOutValidationRequest) {
-        SignOutValidationResponse signOutValidationResponse = accountService.signOutValidation(signOutValidationRequest);
+        Map<String, String> signOutValidationResponse = accountService.signOutValidation(signOutValidationRequest);
         return new ResponseEntity<>(signOutValidationResponse, HttpStatus.OK);
     }
     
