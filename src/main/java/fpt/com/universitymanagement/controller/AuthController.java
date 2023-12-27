@@ -48,24 +48,31 @@ public class AuthController {
     @Operation(summary = "Sign in by using username and password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Signed in successfully!", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponse.class))
             }),
-            @ApiResponse(responseCode = "429", description = "Too many requests!")})
+            @ApiResponse(responseCode = "429", description = "Too many requests!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+            })})
     @PostMapping("/login")
-    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, WebRequest request) {
         String key = loginRequest.getUserName();
         Bucket bucket = cache.computeIfAbsent(key, this::createNewBucket);
         
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
-            JwtResponse jwtResponse = service.authenticateUser(loginRequest);
+            LoginResponse loginResponse = service.authenticateUser(loginRequest);
             cache.remove(key);
-            return ResponseEntity.ok(jwtResponse);
+            return ResponseEntity.ok(loginResponse);
         } else {
             // Too many requests
             long waitForRefill = probe.getNanosToWaitForRefill() / 1_000_000_000;
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body("You have exhausted your API request quota. Try again in " + waitForRefill + " seconds.");
+                    .body(new ErrorMessage(
+                            HttpStatus.TOO_MANY_REQUESTS.value(),
+                            new Date(),
+                            "You have exhausted your API request quota. Try again in " + waitForRefill + " seconds.",
+                            request.getDescription(false)
+                    ));
         }
     }
     

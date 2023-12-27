@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.specification;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.domain.Specification;

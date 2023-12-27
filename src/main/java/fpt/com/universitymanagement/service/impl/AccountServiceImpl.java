@@ -3,14 +3,12 @@ package fpt.com.universitymanagement.service.impl;
 import fpt.com.universitymanagement.config.JwtUtils;
 import fpt.com.universitymanagement.dto.AccountResponse;
 import fpt.com.universitymanagement.dto.ActivationRequest;
-import fpt.com.universitymanagement.dto.JwtResponse;
+import fpt.com.universitymanagement.dto.LoginResponse;
 import fpt.com.universitymanagement.dto.LoginRequest;
-import fpt.com.universitymanagement.entity.Account;
-import fpt.com.universitymanagement.entity.RefreshToken;
+import fpt.com.universitymanagement.entity.account.Account;
+import fpt.com.universitymanagement.entity.account.RefreshToken;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.service.AccountService;
-import fpt.com.universitymanagement.service.RefreshTokenService;
-import jakarta.servlet.http.HttpServletRequest;
 import fpt.com.universitymanagement.specification.AccountSpecification;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -32,13 +30,13 @@ public class AccountServiceImpl implements AccountService {
     private final JwtUtils jwtUtils;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper = new ModelMapper();
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenServiceImpl refreshTokenServiceImpl;
     
-    public AccountServiceImpl(AccountRepository accountRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
+    public AccountServiceImpl(AccountRepository accountRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils, RefreshTokenServiceImpl refreshTokenServiceImpl) {
         this.accountRepository = accountRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
-        this.refreshTokenService = refreshTokenService;
+        this.refreshTokenServiceImpl = refreshTokenServiceImpl;
     }
     
     @Override
@@ -62,44 +60,16 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
-    public JwtResponse authenticateUser(LoginRequest loginRequest) {
+    public LoginResponse authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Optional<Account> account = accountRepository.findByUserName(loginRequest.getUserName());
-        if (account.isEmpty()) {
-            return null;
-        }
-        account.get().setAccessToken(jwt);
-        accountRepository.save(account.get());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(), loginRequest.getUserName());
-        return new JwtResponse(jwt,
+        
+        RefreshToken refreshToken = refreshTokenServiceImpl.createRefreshToken(userDetails.getId(), loginRequest.getUserName());
+        return new LoginResponse(jwt,
                 refreshToken.getToken());
-    }
-    
-    @Override
-    public void logout(HttpServletRequest request) {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
-        }
-        jwt = authHeader.substring(7);
-        String username = jwtUtils.getUserNameFromJwtToken(jwt);
-        Optional<Account> account = accountRepository.findByUserName(username);
-        if (account.isEmpty()) {
-            return;
-        }
-        account.get().setAccessToken(null);
-        accountRepository.save(account.get());
-        RefreshToken storedToken = refreshTokenService.findByToken(jwt)
-                .orElse(null);
-        if (storedToken != null) {
-            refreshTokenService.deleteToken(storedToken);
-            SecurityContextHolder.clearContext();
-        }
     }
     
     @Override

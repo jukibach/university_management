@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.repository;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

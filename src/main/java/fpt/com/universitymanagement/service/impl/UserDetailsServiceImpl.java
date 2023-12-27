@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.service.impl;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.exception.InactiveAccountException;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,5 +28,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return UserDetailsImpl.build(account);
     }
-    
 }
