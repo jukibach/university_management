@@ -10,4 +10,10 @@ public final class Constant {
     public static final String AUTH_CONTROLLER = "/v1/api/auth";
     
     public static final int MILLISECONDS = 36000000;
+    
+    public static final int LIMITED_ATTEMPTS = 5;
+    
+    public static final int LIMITED_DURATION = 1;
+    
+    
 }

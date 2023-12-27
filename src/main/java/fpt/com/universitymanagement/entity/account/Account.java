@@ -32,6 +32,6 @@ public class Account extends BaseEntity {
     private boolean isActivated;
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private Set<RoleAccount> roleAccounts;
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private Set<AccessToken> accessTokens;
 }
