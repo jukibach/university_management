@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableMethodSecurity
-@EnableJpaAuditing(auditorAwareRef="auditorProvider")
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtUtils jwtUtils;
