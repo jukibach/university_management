@@ -53,7 +53,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, WebRequest request) {
         String key = loginRequest.getUserName();
-        Bucket bucket = cache.computeIfAbsent(key, k-> createNewBucket());
+        Bucket bucket = cache.computeIfAbsent(key, k -> createNewBucket());
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
             LoginResponse loginResponse = accountService.login(loginRequest);
