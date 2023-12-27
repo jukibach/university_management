@@ -2,15 +2,11 @@ package fpt.com.universitymanagement.config;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.stream.Collectors;
 
-import fpt.com.universitymanagement.service.impl.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.security.core.GrantedAuthority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -25,16 +21,10 @@ public class JwtUtils {
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
     
-    public String generateJwtToken(Authentication authentication) {
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        String roles = userPrincipal.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    public String generateJwtToken(String userName) {
         
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .claim("roles", roles)
-                .claim("email", userPrincipal.getEmail())
+                .setSubject(userName)
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
                 .signWith(key(), SignatureAlgorithm.HS256)

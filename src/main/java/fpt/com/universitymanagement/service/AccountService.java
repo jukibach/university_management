@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 public interface AccountService {
     Page<AccountResponse> getAllAccounts(Pageable pageable, String searchInput);
     
-    LoginResponse authenticateUser(LoginRequest loginRequest);
+    LoginResponse login(LoginRequest loginRequest);
     
     SignOutValidationResponse signOutValidation(SignOutValidationRequest signOutValidationRequest);
     

@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static fpt.com.universitymanagement.common.Constant.AUTH_CONTROLLER;
+import static fpt.com.universitymanagement.common.Constant.*;
 
 @RestController
 @RequestMapping(AUTH_CONTROLLER)
@@ -53,20 +53,20 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, WebRequest request) {
         String key = loginRequest.getUserName();
-        Bucket bucket = cache.computeIfAbsent(key, this::createNewBucket);
+        Bucket bucket = cache.computeIfAbsent(key, k-> createNewBucket());
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
-            LoginResponse loginResponse = accountService.authenticateUser(loginRequest);
+            LoginResponse loginResponse = accountService.login(loginRequest);
+            cache.remove(key);
             if (loginResponse.isAnotherTokensExists()) {
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
-                        .body(new SignOutConfirmationResponse(
+                        .body(new LoginResponse(
                                 loginResponse.getAccessToken(),
                                 "There are login sessions in another devices. Do you want to keep this session ?",
-                                new Date()
+                                true
                         ));
             }
-            cache.remove(key);
             return ResponseEntity.ok(loginResponse);
         } else {
             // Too many requests
@@ -113,9 +113,9 @@ public class AuthController {
                 request.getDescription(false)), HttpStatus.FORBIDDEN);
     }
     
-    private Bucket createNewBucket(String s) {
+    private Bucket createNewBucket() {
         return new LocalBucketBuilder()
-                .addLimit(Bandwidth.simple(5, Duration.ofHours(1))) // Example: 5 requests per hour
+                .addLimit(Bandwidth.simple(LIMITED_ATTEMPTS, Duration.ofHours(LIMITED_DURATION))) // Example: 5 requests per hour
                 .build();
     }
     
