@@ -78,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
         if (account.isEmpty()) {
             return null;
         }
-        account.get().setActivated(request.getIsActivated());
+        account.get().setActivated(request.isActivated());
         account = Optional.of(accountRepository.save(account.get()));
         return account.map(this::convertToDto).orElse(null);
     }
