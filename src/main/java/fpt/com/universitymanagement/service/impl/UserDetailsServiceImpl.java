@@ -12,19 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final AccountRepository repository;
+    private final AccountRepository accountRepository;
     
-    public UserDetailsServiceImpl(AccountRepository repository) {
-        this.repository = repository;
+    public UserDetailsServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
     
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = repository.findByUserName(username)
+        Account account = accountRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
         if (!account.isActivated()) {
-            throw new InactiveAccountException("User is not activated");
+            throw new InactiveAccountException("Account is deactivated");
         }
         return UserDetailsImpl.build(account);
     }

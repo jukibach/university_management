@@ -11,7 +11,6 @@ import java.util.Set;
 public class AccountResponse extends BaseResponse {
     private long id;
     private String userName;
-    private String email;
     @JsonProperty("isActivated")
     private boolean isActivated;
     private Set<String> roleAccounts;

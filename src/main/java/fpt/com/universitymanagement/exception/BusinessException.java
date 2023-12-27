@@ -1,0 +1,7 @@
+package fpt.com.universitymanagement.exception;
+
+public class BusinessException extends RuntimeException {
+    public BusinessException(String msg) {
+        super(msg);
+    }
+}
