@@ -28,11 +28,5 @@ public class AccountSpecification implements Specification<Account> {
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         }
         return criteriaBuilder.conjunction();
-    public Predicate toPredicate(@NotNull Root<Account> root, @NotNull CriteriaQuery<?> query, @NotNull CriteriaBuilder criteriaBuilder) {
-        root.join("roleAccounts", JoinType.LEFT).join("role", JoinType.LEFT);
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("userName")), "%" + searchInput.toLowerCase() + "%"));
-        predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + searchInput.toLowerCase() + "%"));
-        return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
     }
 }
