@@ -74,12 +74,12 @@ public class AuthController {
         }
     }
     
-    @PostMapping("/logout")
-    public ResponseEntity<Object> logout(HttpServletRequest request) {
-        accountService.logout(request);
-        return new ResponseEntity<>("Logout", HttpStatus.NO_CONTENT);
-    }
-    
+//     @PostMapping("/logout")
+//     public ResponseEntity<Object> logout(HttpServletRequest request) {
+//         accountService.logout(request);
+//         return new ResponseEntity<>("Logout", HttpStatus.NO_CONTENT);
+//     }
+
     @Operation(summary = "Refresh token for an account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {
