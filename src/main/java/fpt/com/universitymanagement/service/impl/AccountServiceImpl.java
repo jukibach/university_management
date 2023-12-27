@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,10 +40,10 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
-    public List<AccountResponse> getAllAccounts(Pageable pageable, String searchInput) {
+    public Page<AccountResponse> getAllAccounts(Pageable pageable, String searchInput) {
         AccountSpecification accountSpecification = new AccountSpecification(searchInput);
         Page<Account> accounts =  accountRepository.findAll(accountSpecification, pageable);
-        return accounts.getContent().stream().map(this::convertToDto).toList();
+        return accounts.map(this::convertToDto);
     }
     
     public AccountResponse convertToDto(Account account) {
