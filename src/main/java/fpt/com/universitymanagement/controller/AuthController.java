@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +54,18 @@ public class AuthController {
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, WebRequest request) {
         String key = loginRequest.getUserName();
         Bucket bucket = cache.computeIfAbsent(key, this::createNewBucket);
-        
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
             LoginResponse loginResponse = accountService.authenticateUser(loginRequest);
+            if (loginResponse.isAnotherTokensExists()) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(new SignOutConfirmationResponse(
+                                loginResponse.getAccessToken(),
+                                "There are login sessions in another devices. Do you want to keep this session ?",
+                                new Date()
+                        ));
+            }
             cache.remove(key);
             return ResponseEntity.ok(loginResponse);
         } else {
@@ -74,12 +81,17 @@ public class AuthController {
         }
     }
     
-//     @PostMapping("/logout")
-//     public ResponseEntity<Object> logout(HttpServletRequest request) {
-//         accountService.logout(request);
-//         return new ResponseEntity<>("Logout", HttpStatus.NO_CONTENT);
-//     }
-
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = SignOutValidationResponse.class))
+            })})
+    @Operation(summary = "Sign out all login sessions except the latest login session")
+    @PostMapping("/sign-out-validation")
+    public ResponseEntity<Object> validateSignOut(@Valid @RequestBody SignOutValidationRequest signOutValidationRequest) {
+        SignOutValidationResponse signOutValidationResponse = accountService.signOutValidation(signOutValidationRequest);
+        return new ResponseEntity<>(signOutValidationResponse, HttpStatus.OK);
+    }
+    
     @Operation(summary = "Refresh token for an account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {

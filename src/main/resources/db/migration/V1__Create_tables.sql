@@ -16,6 +16,19 @@ CREATE TABLE account.accounts
 
 CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
 
+CREATE TABLE account.access_token
+(
+    id          BIGSERIAL PRIMARY KEY,
+    token       VARCHAR(255) NOT NULL UNIQUE,
+    expiry_date TIMESTAMP    NOT NULL,
+    account_id  BIGINT,
+    created_at  TIMESTAMP    NOT NULL,
+    created_by  VARCHAR(255) NOT NULL,
+    updated_at  TIMESTAMP,
+    updated_by  VARCHAR(255),
+    FOREIGN KEY (account_id) REFERENCES account.accounts (id)
+);
+
 CREATE TABLE account.permissions
 (
     id          BIGSERIAL PRIMARY KEY,

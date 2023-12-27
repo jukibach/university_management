@@ -1,10 +1,6 @@
 package fpt.com.universitymanagement.service;
 
-import fpt.com.universitymanagement.dto.AccountResponse;
-import fpt.com.universitymanagement.dto.ActivationRequest;
-import fpt.com.universitymanagement.dto.LoginResponse;
-import fpt.com.universitymanagement.dto.LoginRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import fpt.com.universitymanagement.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +9,7 @@ public interface AccountService {
     
     LoginResponse authenticateUser(LoginRequest loginRequest);
     
-    void logout(HttpServletRequest request);
+    SignOutValidationResponse signOutValidation(SignOutValidationRequest signOutValidationRequest);
     
     AccountResponse switchAccountStatus(ActivationRequest request);
 }

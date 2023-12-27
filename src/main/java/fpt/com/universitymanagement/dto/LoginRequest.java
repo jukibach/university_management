@@ -15,4 +15,6 @@ public class LoginRequest {
     @NotBlank(message = "Password must not be null")
     @Size(message = "Password must have at least 5 characters", min = 4)
     private String password;
+    
+    private boolean validated;
 }

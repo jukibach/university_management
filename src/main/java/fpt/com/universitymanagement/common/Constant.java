@@ -4,8 +4,10 @@ public final class Constant {
     private Constant() {
     
     }
+    
     public static final String ACCOUNT_CONTROLLER = "/v1/api/accounts";
     
     public static final String AUTH_CONTROLLER = "/v1/api/auth";
     
+    public static final int MILLISECONDS = 36000000;
 }
