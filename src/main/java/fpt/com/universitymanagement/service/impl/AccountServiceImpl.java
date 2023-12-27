@@ -1,75 +1,75 @@
 package fpt.com.universitymanagement.service.impl;
 
-import fpt.com.universitymanagement.config.JwtUtils;
-import fpt.com.universitymanagement.dto.AccountResponse;
-import fpt.com.universitymanagement.dto.ActivationRequest;
-import fpt.com.universitymanagement.dto.LoginResponse;
-import fpt.com.universitymanagement.dto.LoginRequest;
+import fpt.com.universitymanagement.common.JwtUtils;
+import fpt.com.universitymanagement.dto.*;
+import fpt.com.universitymanagement.entity.account.AccessToken;
 import fpt.com.universitymanagement.entity.account.Account;
-import fpt.com.universitymanagement.entity.account.RefreshToken;
+import fpt.com.universitymanagement.exception.NotFoundException;
+import fpt.com.universitymanagement.mapper.AccountMapper;
+import fpt.com.universitymanagement.repository.AccessTokenRepository;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.service.AccountService;
 import fpt.com.universitymanagement.specification.AccountSpecification;
-import jakarta.servlet.http.HttpServletRequest;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static fpt.com.universitymanagement.common.Constant.MILLISECONDS;
+
 
 @Service
 public class AccountServiceImpl implements AccountService {
-    private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final AccountRepository accountRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
-    private final RefreshTokenServiceImpl refreshTokenServiceImpl;
+    private final AccessTokenRepository accessTokenRepository;
+    @Value("${app.jwtExpirationMs}")
+    private long jwtExpirationMs;
+    private final AccountMapper accountMapper;
     
-    public AccountServiceImpl(AccountRepository accountRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils, RefreshTokenServiceImpl refreshTokenServiceImpl) {
+    public AccountServiceImpl(AccountRepository accountRepository, JwtUtils jwtUtils, AccessTokenRepository accessTokenRepository, AccountMapper accountMapper) {
         this.accountRepository = accountRepository;
-        this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
-        this.refreshTokenServiceImpl = refreshTokenServiceImpl;
+        this.accessTokenRepository = accessTokenRepository;
+        this.accountMapper = accountMapper;
     }
     
     @Override
     public Page<AccountResponse> getAllAccounts(Pageable pageable, String searchInput) {
         AccountSpecification accountSpecification = new AccountSpecification(searchInput);
-        Page<Account> accounts =  accountRepository.findAll(accountSpecification, pageable);
-        return accounts.map(this::convertToDto);
-    }
-    
-    public AccountResponse convertToDto(Account account) {
-        AccountResponse dto = new AccountResponse();
-        modelMapper.typeMap(Account.class, AccountResponse.class).addMappings(mapper ->
-                mapper.skip(AccountResponse::setRoleAccounts)
-        );
-        modelMapper.map(account, dto);
-        Set<String> roleDTOs = account.getRoleAccounts().stream()
-                .map(roleAccount -> roleAccount.getRole().getName())
-                .collect(Collectors.toSet());
-        dto.setRoleAccounts(roleDTOs);
-        return dto;
+        Page<Account> accounts = accountRepository.findAll(accountSpecification, pageable);
+        return accounts.map(accountMapper::accountToAccountResponse);
     }
     
     @Override
-    public LoginResponse authenticateUser(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    @Transactional
+    public LoginResponse login(LoginRequest loginRequest) {
+        LoginResponse loginResponse = new LoginResponse();
         
-        RefreshToken refreshToken = refreshTokenServiceImpl.createRefreshToken(userDetails.getId(), loginRequest.getUserName());
-        return new LoginResponse(jwt,
-                refreshToken.getToken());
+        Optional<Account> account = accountRepository.findByUserName(loginRequest.getUserName());
+        if (account.isEmpty()) {
+            throw new UsernameNotFoundException("Username does not exist");
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(loginRequest.getPassword(), account.get().getPassword())) {
+            throw new UsernameNotFoundException("Incorrect password");
+        }
+        boolean tokenExists = !account.get().getAccessTokens().isEmpty();
+        AccessToken accessToken = getNewAccess(account.get());
+        accessTokenRepository.save(accessToken);
+        loginResponse.setAccessToken(accessToken.getToken());
+        if (tokenExists) {
+            loginResponse.setAnotherTokensExists(true);
+        }
+        return loginResponse;
     }
     
     @Override
@@ -80,11 +80,62 @@ public class AccountServiceImpl implements AccountService {
         }
         account.get().setActivated(request.isActivated());
         account = Optional.of(accountRepository.save(account.get()));
-        return account.map(this::convertToDto).orElse(null);
+        return account.map(accountMapper::accountToAccountResponse).orElse(null);
     }
     
     @Override
-    public void logout(HttpServletRequest request) {
+    public Map<String, String> signOutValidation(SignOutValidationRequest signOutValidationRequest) {
+        Map<String, String> signOutValidationResponse = new HashMap<>();
+        List<AccessToken> accessTokenList;
+        if (signOutValidationRequest.isSignOut()) {
+            accessTokenList = accessTokenRepository.findByAccount_Id(signOutValidationRequest.getAccountId());
+            accessTokenList = accessTokenList.stream().filter(s -> !Objects.equals(s.getToken(), signOutValidationRequest.getAccessToken())).toList();
+            signOutValidationResponse.put("message", "Deleted all tokens except the latest token");
+        } else {
+            accessTokenList = accessTokenRepository.findByExpiryDateBeforeAndAccount_Id(LocalDateTime.now(), signOutValidationRequest.getAccountId());
+            signOutValidationResponse.put("message", "Deleted all expired tokens");
+        }
+        accessTokenRepository.deleteAll(accessTokenList);
+        return signOutValidationResponse;
+    }
     
+    @Override
+    public void logout(String accessToken) {
+        accessTokenRepository.delete(findByToken(accessToken));
+    }
+    
+    @Override
+    public AccessToken findByToken(String accessToken) {
+        return accessTokenRepository.findByToken(accessToken).orElseThrow(() -> new NotFoundException("Access token does not exist"));
+    }
+    
+    @Override
+    @Transactional
+    public TokenRefreshResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        AccessToken accessToken = findByToken(refreshTokenRequest.getAccessToken());
+        TokenRefreshResponse tokenRefreshResponse = new TokenRefreshResponse();
+        String newAccessToken = jwtUtils.generateJwtToken(accessToken.getAccount().getUserName());
+        accessToken.setToken(newAccessToken);
+        accessToken.setExpiryDate(LocalDateTime.now().plusHours(jwtExpirationMs / MILLISECONDS));
+        accessTokenRepository.save(accessToken);
+        tokenRefreshResponse.setAccessToken(newAccessToken);
+        return tokenRefreshResponse;
+    }
+    
+    @Override
+    public AccountResponse displayAccountInfo(String accessToken) {
+        Account account = findByToken(accessToken).getAccount();
+        return accountMapper.accountToAccountResponse(account);
+    }
+    
+    private AccessToken getNewAccess(Account account) {
+        String jwt = jwtUtils.generateJwtToken(account.getUserName());
+        AccessToken accessToken = new AccessToken();
+        accessToken.setToken(jwt);
+        accessToken.setExpiryDate(LocalDateTime.now().plusHours(jwtExpirationMs / MILLISECONDS));
+        accessToken.setCreatedBy(account.getUserName());
+        accessToken.setCreatedAt(Timestamp.from(Instant.now()));
+        accessToken.setAccount(account);
+        return accessToken;
     }
 }
