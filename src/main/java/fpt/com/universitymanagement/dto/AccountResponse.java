@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class AccountResponse {
+public class AccountResponse extends BaseResponse {
     private long id;
     private String userName;
     private String email;

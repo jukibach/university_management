@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +74,12 @@ public class AuthController {
         }
     }
     
+//     @PostMapping("/logout")
+//     public ResponseEntity<Object> logout(HttpServletRequest request) {
+//         accountService.logout(request);
+//         return new ResponseEntity<>("Logout", HttpStatus.NO_CONTENT);
+//     }
+
     @Operation(summary = "Refresh token for an account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {

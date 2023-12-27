@@ -10,6 +10,7 @@ import fpt.com.universitymanagement.entity.account.RefreshToken;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.service.AccountService;
 import fpt.com.universitymanagement.specification.AccountSpecification;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,8 +78,13 @@ public class AccountServiceImpl implements AccountService {
         if (account.isEmpty()) {
             return null;
         }
-        account.get().setActivated(request.getIsActivated());
+        account.get().setActivated(request.isActivated());
         account = Optional.of(accountRepository.save(account.get()));
         return account.map(this::convertToDto).orElse(null);
+    }
+    
+    @Override
+    public void logout(HttpServletRequest request) {
+    
     }
 }

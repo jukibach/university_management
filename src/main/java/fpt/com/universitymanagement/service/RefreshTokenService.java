@@ -10,4 +10,6 @@ public interface RefreshTokenService {
     RefreshToken createRefreshToken(long accountId, String userName);
     RefreshToken verifyExpiration(RefreshToken token);
     TokenRefreshResponse refreshToken(TokenRefreshRequest request);
+    void deleteToken(RefreshToken token);
+    
 }
