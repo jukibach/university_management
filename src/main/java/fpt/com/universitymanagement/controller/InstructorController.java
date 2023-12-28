@@ -4,6 +4,7 @@ import fpt.com.universitymanagement.dto.CoursesResponse;
 import fpt.com.universitymanagement.entity.curriculum.Course;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
+import fpt.com.universitymanagement.repository.StudentRepository;
 import fpt.com.universitymanagement.service.impl.InstructorServicelmpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,13 +19,17 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 import static fpt.com.universitymanagement.common.Constant.ACCOUNT_CONTROLLER;
+
 @RestController
 @RequestMapping(ACCOUNT_CONTROLLER)
 public class InstructorController {
 
     @Autowired
     InstructorServicelmpl instructorServicelmpl;
+
 
     @GetMapping("/courses")
     @PreAuthorize("hasRole('ADMIN')")
