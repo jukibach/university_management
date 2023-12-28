@@ -89,6 +89,11 @@ public class AuthController {
         }
     }
     
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logged out successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+            })})
+    @Operation(summary = "Log out for a login session")
     @PostMapping("/logout")
     public ResponseEntity<Object> signOut(@RequestBody String accessToken) {
         accountService.logout(accessToken);
