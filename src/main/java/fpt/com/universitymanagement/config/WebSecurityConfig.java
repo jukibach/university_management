@@ -2,12 +2,10 @@ package fpt.com.universitymanagement.config;
 
 import fpt.com.universitymanagement.common.JwtUtils;
 import fpt.com.universitymanagement.service.AccountService;
-import fpt.com.universitymanagement.service.impl.AuditorAwareImpl;
 import fpt.com.universitymanagement.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -39,11 +37,6 @@ public class WebSecurityConfig {
         this.unauthorizedHandler = unauthorizedHandler;
         this.accessDeniedHandler = accessDeniedHandler;
         this.accountService = accountService;
-    }
-    
-    @Bean
-    public AuditorAware<String> auditorProvider() {
-        return new AuditorAwareImpl();
     }
     
     @Bean
