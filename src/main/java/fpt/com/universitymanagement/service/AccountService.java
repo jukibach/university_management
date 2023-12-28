@@ -16,6 +16,8 @@ public interface AccountService {
     
     void logout(String accessToken);
     
+    TokenRefreshResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
+    
     AccountResponse switchAccountStatus(ActivationRequest request);
     
     AccessToken findByToken(String accessToken);

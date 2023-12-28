@@ -18,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -61,7 +63,9 @@ public class AccountServiceImpl implements AccountService {
             throw new UsernameNotFoundException("Incorrect password");
         }
         boolean tokenExists = !account.get().getAccessTokens().isEmpty();
-        loginResponse.setAccessToken(getJwt(account.get()));
+        AccessToken accessToken = getNewAccess(account.get());
+        accessTokenRepository.save(accessToken);
+        loginResponse.setAccessToken(accessToken.getToken());
         if (tokenExists) {
             loginResponse.setAnotherTokensExists(true);
         }
@@ -105,13 +109,27 @@ public class AccountServiceImpl implements AccountService {
         return accessTokenRepository.findByToken(accessToken).orElseThrow(() -> new NotFoundException("Access token does not exist"));
     }
     
-    private String getJwt(Account account) {
+    @Override
+    @Transactional
+    public TokenRefreshResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        AccessToken accessToken = findByToken(refreshTokenRequest.getAccessToken());
+        TokenRefreshResponse tokenRefreshResponse = new TokenRefreshResponse();
+        String newAccessToken = jwtUtils.generateJwtToken(accessToken.getAccount().getUserName());
+        accessToken.setToken(newAccessToken);
+        accessToken.setExpiryDate(LocalDateTime.now().plusHours(jwtExpirationMs / MILLISECONDS));
+        accessTokenRepository.save(accessToken);
+        tokenRefreshResponse.setAccessToken(newAccessToken);
+        return tokenRefreshResponse;
+    }
+    
+    private AccessToken getNewAccess(Account account) {
         String jwt = jwtUtils.generateJwtToken(account.getUserName());
         AccessToken accessToken = new AccessToken();
         accessToken.setToken(jwt);
         accessToken.setExpiryDate(LocalDateTime.now().plusHours(jwtExpirationMs / MILLISECONDS));
+        accessToken.setCreatedBy(account.getUserName());
+        accessToken.setCreatedAt(Timestamp.from(Instant.now()));
         accessToken.setAccount(account);
-        accessTokenRepository.save(accessToken);
-        return jwt;
+        return accessToken;
     }
 }

@@ -38,9 +38,7 @@ public class BaseEntity {
     
     @PreUpdate
     private void onUpdate() {
-        if (!StringUtils.hasText(this.updatedBy)) {
-            this.updatedBy = SecurityUtils.getAuthentication();
-            this.updatedAt = Timestamp.from(Instant.now());
-        }
+        this.updatedBy = SecurityUtils.getAuthentication();
+        this.updatedAt = Timestamp.from(Instant.now());
     }
 }

@@ -3,7 +3,6 @@ package fpt.com.universitymanagement.controller;
 import fpt.com.universitymanagement.dto.*;
 import fpt.com.universitymanagement.exception.ErrorMessage;
 import fpt.com.universitymanagement.service.AccountService;
-import fpt.com.universitymanagement.service.RefreshTokenService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
@@ -13,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +34,9 @@ import static fpt.com.universitymanagement.common.Constant.*;
 @RequestMapping(AUTH_CONTROLLER)
 public class AuthController {
     private final AccountService accountService;
-    private final RefreshTokenService refreshTokenService;
     
-    public AuthController(AccountService accountService, RefreshTokenService refreshTokenService) {
+    public AuthController(AccountService accountService) {
         this.accountService = accountService;
-        this.refreshTokenService = refreshTokenService;
     }
     
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
@@ -112,21 +110,11 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TokenRefreshResponse.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Refresh token is not in database!", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
             })})
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/refresh-token")
-    public ResponseEntity<Object> refreshToken(@Valid @RequestBody TokenRefreshRequest dto, WebRequest request) {
-        TokenRefreshResponse token = refreshTokenService.refreshToken(dto);
-        if (token != null) {
-            return ResponseEntity.ok(token);
-        }
-        return new ResponseEntity<>(new ErrorMessage(
-                HttpStatus.FORBIDDEN.value(),
-                new Date(),
-                String.format("Failed for [%s]: %s", dto.getRefreshToken(), "Refresh token is not in database!"),
-                request.getDescription(false)), HttpStatus.FORBIDDEN);
+    public ResponseEntity<Object> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return ResponseEntity.ok(accountService.refreshToken(refreshTokenRequest));
     }
     
     private Bucket createNewBucket() {
