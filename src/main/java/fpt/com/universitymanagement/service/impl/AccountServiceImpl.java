@@ -122,6 +122,12 @@ public class AccountServiceImpl implements AccountService {
         return tokenRefreshResponse;
     }
     
+    @Override
+    public AccountResponse displayAccountInfo(String accessToken) {
+        Account account = findByToken(accessToken).getAccount();
+        return accountMapper.accountToAccountResponse(account);
+    }
+    
     private AccessToken getNewAccess(Account account) {
         String jwt = jwtUtils.generateJwtToken(account.getUserName());
         AccessToken accessToken = new AccessToken();

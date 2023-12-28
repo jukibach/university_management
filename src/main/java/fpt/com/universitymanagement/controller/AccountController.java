@@ -53,4 +53,18 @@ public class AccountController {
     public ResponseEntity<AccountResponse> switchAccountStatus(@RequestBody ActivationRequest request) {
         return ResponseEntity.ok(accountService.switchAccountStatus(request));
     }
+    
+    @Operation(summary = "Display personal profile")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Fetched successfully!", content = {
+                    @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = AccountResponse.class)))
+            })
+    })
+    @GetMapping("/personal-profile")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public AccountResponse displayAccountInfo(@RequestParam String accessToken) {
+        return accountService.displayAccountInfo(accessToken);
+    }
 }

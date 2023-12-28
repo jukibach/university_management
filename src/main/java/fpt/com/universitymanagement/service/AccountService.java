@@ -21,4 +21,6 @@ public interface AccountService {
     AccountResponse switchAccountStatus(ActivationRequest request);
     
     AccessToken findByToken(String accessToken);
+    
+    AccountResponse displayAccountInfo(String accessToken);
 }
