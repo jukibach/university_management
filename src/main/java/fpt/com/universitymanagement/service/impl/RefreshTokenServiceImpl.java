@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-import fpt.com.universitymanagement.config.JwtUtils;
+import fpt.com.universitymanagement.common.JwtUtils;
 import fpt.com.universitymanagement.dto.TokenRefreshRequest;
 import fpt.com.universitymanagement.dto.TokenRefreshResponse;
 import fpt.com.universitymanagement.entity.account.Account;
