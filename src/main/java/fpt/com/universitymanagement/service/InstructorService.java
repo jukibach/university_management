@@ -16,5 +16,5 @@ public interface InstructorService {
 
     List<GradeReport> getGradeReportByStudentId(Long id);
 
-    String updateGradeReport(Long studentId, GradeReport gradeReport);
+    GradeReport updateGradeReport(Long studentId, GradeReport gradeReport);
 }

@@ -2,7 +2,6 @@ package fpt.com.universitymanagement.service.impl;
 
 import fpt.com.universitymanagement.entity.curriculum.Course;
 import fpt.com.universitymanagement.entity.faculty.CourseInstructor;
-import fpt.com.universitymanagement.entity.faculty.Instructor;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
 import fpt.com.universitymanagement.entity.student.StudentCourse;
@@ -17,8 +16,6 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,35 +23,17 @@ import java.util.Optional;
 public class InstructorServicelmpl implements InstructorService {
 
     @Autowired
-    InstructorsRepository instructorsRepository;
+    private InstructorsRepository instructorsRepository;
 
     @Autowired
-    StudentRepository studentRepository;
+    private StudentRepository studentRepository;
 
     @Autowired
-    CoursesRepository coursesRepository;
+    private CoursesRepository coursesRepository;
 
     @Autowired
-    GradeReportRepository gradeReportRepository;
+    private GradeReportRepository gradeReportRepository;
 
-//    @Override
-//    public Page<Course> getCoursesByFindByCode(String code, Pageable pageable) {
-//        Optional<Instructor> instructorOptional = instructorsRepository.findByCode(code);
-//        if (instructorOptional.isPresent()) {
-//            Instructor instructor = instructorOptional.get();
-//            List<CourseInstructor> courseInstructors = instructor.getCourseInstructors();
-//
-//            List<Course> courses = new ArrayList<>();
-//            for (CourseInstructor courseInstructor : courseInstructors) {
-//                Course course = courseInstructor.getCourse();
-//                courses.add(course);
-//            }
-//
-//            return new PageImpl<>(courses, pageable, courses.size());
-//        }
-//
-//        return Page.empty();
-//    }
 
     @Override
     public Page<Course> getCoursesByFindByCode(String code, Pageable pageable) {
@@ -76,33 +55,38 @@ public class InstructorServicelmpl implements InstructorService {
 
     }
 
-    @Override
     public List<GradeReport> getGradeReportByStudentId(Long id) {
-        Optional<Student> student = studentRepository.findById(id);
-        if (student.isPresent()) {
-            Student students = student.get();
-            return students.getGradeReports();
-        }
-        return Collections.emptyList();
+        Specification<GradeReport> gradeReportSpec = (root, query, criteriaBuilder) -> {
+            Join<GradeReport, Student> gradeReportStudentJoin = root.join("student");
+            return criteriaBuilder.equal(gradeReportStudentJoin.get("gradeReports").get("id"), id);
+        };
+        return gradeReportRepository.findAll(gradeReportSpec);
     }
 
     @Override
-    public String updateGradeReport(Long studentId, GradeReport gradeReport) {
-        Optional<Student> student = studentRepository.findById(studentId);
-        if (student.isPresent()) {
-            Student student1 = student.get();
-            List<GradeReport> gradeReports = student1.getGradeReports();
-            for (GradeReport gradeReport1 : gradeReports) {
-                gradeReport1.setPointProcess(gradeReport.getPointProcess());
-                gradeReport1.setPointEndCourse(gradeReport.getPointEndCourse());
-                gradeReport1.setTotalMark(gradeReport.getTotalMark());
-                gradeReport1.setGrades(gradeReport.getGrades());
-                gradeReport1.setCreatedAt(gradeReport.getCreatedAt());
-                gradeReport1.setCreatedBy(gradeReport.getCreatedBy());
-                gradeReportRepository.save(gradeReport1);
+    public GradeReport updateGradeReport(Long studentId, GradeReport updatedGradeReport) {
+        try {
+            Optional<Student> studentOptional = studentRepository.findById(studentId);
+            if (studentOptional.isPresent()) {
+                Student student = studentOptional.get();
+                List<GradeReport> gradeReports = student.getGradeReports();
+                for (GradeReport gradeReport : gradeReports) {
+                    if (gradeReport.getId().equals(updatedGradeReport.getId())) {
+                        gradeReport.setPointProcess(updatedGradeReport.getPointProcess());
+                        gradeReport.setPointEndCourse(updatedGradeReport.getPointEndCourse());
+                        gradeReport.setTotalMark(updatedGradeReport.getTotalMark());
+                        gradeReport.setGrades(updatedGradeReport.getGrades());
+                        gradeReport.setCreatedAt(updatedGradeReport.getCreatedAt());
+                        gradeReport.setCreatedBy(updatedGradeReport.getCreatedBy());
+                        gradeReportRepository.save(gradeReport);
+                        return gradeReport;
+                    }
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return "Update Successfully";
+        return null;
     }
 
 }

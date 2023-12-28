@@ -4,8 +4,7 @@ import fpt.com.universitymanagement.dto.CoursesResponse;
 import fpt.com.universitymanagement.entity.curriculum.Course;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
-import fpt.com.universitymanagement.repository.StudentRepository;
-import fpt.com.universitymanagement.service.impl.InstructorServicelmpl;
+import fpt.com.universitymanagement.service.InstructorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static fpt.com.universitymanagement.common.Constant.ACCOUNT_CONTROLLER;
 
@@ -28,7 +26,7 @@ import static fpt.com.universitymanagement.common.Constant.ACCOUNT_CONTROLLER;
 public class InstructorController {
 
     @Autowired
-    InstructorServicelmpl instructorServicelmpl;
+    private InstructorService instructorService;
 
 
     @GetMapping("/courses")
@@ -46,7 +44,7 @@ public class InstructorController {
     public ResponseEntity<Page<Course>> getCourseList(
             @RequestParam String instructorCode,
             Pageable pageable) {
-        Page<Course> coursePage = instructorServicelmpl.getCoursesByFindByCode(instructorCode, pageable);
+        Page<Course> coursePage = instructorService.getCoursesByFindByCode(instructorCode, pageable);
         return ResponseEntity.ok(coursePage);
     }
 
@@ -62,7 +60,7 @@ public class InstructorController {
     })
     public ResponseEntity<Page<Student>> studentList(
             @RequestParam Long id, Pageable pageable) {
-        Page<Student> students = instructorServicelmpl.getStudentByCourses(id, pageable);
+        Page<Student> students = instructorService.getStudentByCourses(id, pageable);
         return ResponseEntity.ok(students);
     }
 
@@ -76,7 +74,7 @@ public class InstructorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public List<GradeReport> gradeReports(@RequestParam Long id) {
-        return instructorServicelmpl.getGradeReportByStudentId(id);
+        return instructorService.getGradeReportByStudentId(id);
     }
 
     @PutMapping
@@ -89,8 +87,8 @@ public class InstructorController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public String updateGradeReport(@RequestParam Long studentId, @RequestBody GradeReport gradeReport) {
-        return instructorServicelmpl.updateGradeReport(studentId, gradeReport);
+    public GradeReport updateGradeReport(@RequestParam Long studentId, @RequestBody GradeReport gradeReport) {
+        return instructorService.updateGradeReport(studentId, gradeReport);
     }
 
 

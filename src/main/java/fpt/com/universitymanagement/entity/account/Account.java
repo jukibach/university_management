@@ -1,7 +1,7 @@
 package fpt.com.universitymanagement.entity.account;
 
 import fpt.com.universitymanagement.entity.BaseEntity;
-import fpt.com.universitymanagement.entity.PasswordResetToken;
+import fpt.com.universitymanagement.entity.PasswordConversion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -34,5 +34,5 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private Set<RoleAccount> roleAccounts;
     @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
-    private PasswordResetToken passwordResetToken;
+    private PasswordConversion passwordConversion;
 }

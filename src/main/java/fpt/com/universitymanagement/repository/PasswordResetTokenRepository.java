@@ -1,11 +1,11 @@
 package fpt.com.universitymanagement.repository;
 
-import fpt.com.universitymanagement.entity.PasswordResetToken;
+import fpt.com.universitymanagement.entity.PasswordConversion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
+public interface PasswordResetTokenRepository extends JpaRepository<PasswordConversion, Long> {
 
-    Optional<PasswordResetToken>findByToken(String token);
+    Optional<PasswordConversion> findByToken(String token);
 }

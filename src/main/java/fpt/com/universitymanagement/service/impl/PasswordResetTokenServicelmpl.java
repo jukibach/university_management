@@ -1,15 +1,20 @@
 package fpt.com.universitymanagement.service.impl;
 
-import fpt.com.universitymanagement.entity.PasswordResetToken;
+import fpt.com.universitymanagement.entity.PasswordConversion;
 import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.repository.PasswordResetTokenRepository;
 import fpt.com.universitymanagement.service.PasswordResetService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -21,36 +26,38 @@ import java.util.Random;
 public class PasswordResetTokenServicelmpl implements PasswordResetService {
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
     @Autowired
-    PasswordResetTokenRepository passwordResetTokenRepository;
+    private PasswordResetTokenRepository passwordResetTokenRepository;
     @Autowired
-    JavaMailSender mailSender;
+    private JavaMailSender mailSender;
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Override
-    public String forgotPassword(String email) {
+    public void forgotPassword(String email) {
         Account account = accountRepository.findByEmail(email).orElse(null);
         if (account == null) {
-            return "Email is not accurate";
+            return;
         }
         String token = generateResetToken();
-        PasswordResetToken passwordResetToken = new PasswordResetToken();
-        passwordResetToken.setToken(token);
-        passwordResetToken.setAccount(account);
-        passwordResetToken.setExpiryDate(Instant.now());
-        passwordResetTokenRepository.save(passwordResetToken);
+        PasswordConversion passwordConversion = new PasswordConversion();
+        passwordConversion.setToken(token);
+        passwordConversion.setAccount(account);
+        passwordConversion.setExpiryDate(Instant.now());
+        passwordResetTokenRepository.save(passwordConversion);
         sendResetEmail(email, token);
-        return "The email has been sent to the address " + email + ". Please check your email to reset your password.";
     }
 
     @Override
-    public String resetPassword(String resetToken, String newPassword) {
-        Optional<PasswordResetToken> getToken = passwordResetTokenRepository.findByToken(resetToken);
+    public void resetPassword(String token, String newPassword, String confirmPassword) {
+
+        Optional<PasswordConversion> getToken = passwordResetTokenRepository.findByToken(token);
         if (getToken.isEmpty()) {
-            return "Token is not valid";
+            return;
         }
         if (getToken.get().getExpiryDate().isBefore(Instant.now().minus(Duration.ofDays(1)))) {
-            return "Token is expired 1 day";
+            return;
         }
         Account account = getToken.get().getAccount();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -58,7 +65,6 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
         account.setPassword(encodedPassword);
         passwordResetTokenRepository.delete(getToken.get());
         accountRepository.save(account);
-        return "Password has been successfully reset.";
     }
 
     @Override
@@ -71,13 +77,23 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
 
     @Override
     public void sendResetEmail(String email, String token) {
+        Context context = new Context();
+        String resetLink = "http://huuvu/reset-password?OTP=" + token;
+        context.setVariable("resetLink", resetLink);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("huuvule255@gmail.com");
-        message.setTo(email);
-        message.setText("OTP:" + token);
-        message.setSubject("Reset Password");
-        mailSender.send(message);
+        String htmlContent = templateEngine.process("reset_password.html", context);
 
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setFrom("huuvule255@gmail.com");
+            helper.setTo(email);
+            helper.setSubject("Đặt lại mật khẩu");
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

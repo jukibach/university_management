@@ -10,8 +10,8 @@ import java.time.Instant;
 @Entity
 @Getter
 @Setter
-@Table(name = "password_reset_token", schema = "account")
-public class PasswordResetToken extends BaseEntity {
+@Table(name = "password_conversion", schema = "account")
+public class PasswordConversion extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -410,36 +410,96 @@ create table if not exists timetable.timetable_session
 );
 
 INSERT INTO faculty.instructors (code, name, dob, email, phone, gender, address, account_id, created_at, created_by)
-VALUES ('T001', 'Nguyen Van A', '2012-12-12', 'huuvu110799@gmail.com', '0905756741', 'nam', 'Quy Nhon', 3, TIMESTAMP '2022-12-12', 'VuLh26');
+VALUES ('T001', 'Nguyen Van A', '2012-12-12', 'huuvu110799@gmail.com', '0905756741', 'nam', 'Quy Nhon', 3, TIMESTAMP '2022-12-12', 'VuLh26'),
+ ('T002', 'Nguyen Van C', '2012-12-12', 'huuvu1999@gmail.com', '0905756743', 'nam', 'Quy Nhon', 1, TIMESTAMP '2022-12-12', 'VuLh26'),
+ ('T003', 'Nguyen Van D', '2013-12-12', 'huuvule225@gmail.com', '0905756742', 'nam', 'Binh Dinh', 2, TIMESTAMP '2022-12-12', 'VuLh26');
+
+
 
 INSERT INTO curriculum.courses (code, name, credits, description, start_day, start_time, created_at, created_by)
 VALUES
-  ('COURSE001', 'Khóa học 1', 3, 'Mô tả khóa học 1', '2023-01-01',  '2023-01-01 09:00:00', CURRENT_TIMESTAMP, 'Admin'),
-  ('COURSE002', 'Khóa học 2', 4, 'Mô tả khóa học 2', '2023-02-01',  '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
-  ('COURSE003', 'Khóa học 3', 2, 'Mô tả khóa học 3', '2023-03-01',  '2023-03-01 18:00:00', CURRENT_TIMESTAMP, 'Admin');
+ ('COURSE001', 'Course 1', 3, 'Course 1 description', '2023-01-01', '2023-01-01 09:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE002', 'Course 2', 4, 'Course 2 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE003', 'Course 3', 2, 'Course 3 description', '2023-03-01', '2023-03-01 18:00:00', CURRENT_TIMESTAMP, 'Admin');
 
   INSERT INTO student.students (code, name, dob, email, phone, gender, address, academic_year, account_id, created_at, created_by)
-  VALUES ('S001', 'Nguyen Van A', '2000-01-01', 'nguyenvana@example.com', '123456789', 'Male', '123 ABC Street', '2023', 2, CURRENT_TIMESTAMP, 'Admin');
+  VALUES ('S001', 'Nguyen Van A', '2000-01-01', 'nguyenvana@example.com', '123456789', 'Male', '123 ABC Street', '2023', 19, CURRENT_TIMESTAMP, 'Admin'),
+ ('S002', 'Nguyen Thi By', '2001-02-02', 'nguyenthiia1@example.com', '9876543311', 'Female', '456 XYZ Street', '2023', 18, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S003', 'Nguyen Thi B', '2001-02-02', 'nguyenthia7@example.com', '9876543211', 'Female', '456 XYZ Street', '2023', 1, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S004', 'Nguyen Thi C', '2001-02-02', 'nguyenthib2@example.com', '9876543212', 'Female', '456 XYZ Street', '2023', 2, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S005', 'Nguyen Thi D', '2001-02-02', 'nguyenthic3@example.com', '9876543213', 'Female', '456 XYZ Street', '2023', 3, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S006', 'Nguyen Thi BE', '2001-02-02', 'nguyenthid4@example.com', '9876543214', 'Female', '456 XYZ Street', '2023', 4, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S007', 'Nguyen Thi F', '2001-02-02', 'nguyenthicc5@example.com', '9876543215', 'Female', '456 XYZ Street', '2023', 20, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S008', 'Nguyen Thi G', '2001-02-02', 'nguyenthibb6@example.com', '9876543216', 'Female', '456 XYZ Street', '2023', 5, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S009', 'Nguyen Thi H', '2001-02-02', 'nguyenthiba8@example.com', '9876543217', 'Female', '456 XYZ Street', '2023', 6, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S010', 'Nguyen Thi K', '2001-02-02', 'nguyenthiby9@example.com', '9876543218', 'Female', '456 XYZ Street', '2023', 7, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S011', 'Nguyen Thi BPP','2001-02-02', 'nguyenthibi10@example.com', '9876543219', 'Female', '456 XYZ Street', '2023', 8, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S012', 'Nguyen Thi RR', '2001-02-02', 'nguyenthibo11@example.com', '9876543222', 'Female', '456 XYZ Street', '2023', 9, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S013', 'Nguyen Thi FF', '2001-02-02', 'nguyenthibp12@example.com', '9876543223', 'Female', '456 XYZ Street', '2023', 10, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S014', 'Nguyen Thi OO', '2001-02-02', 'nguyenthibq13@example.com', '9876543224', 'Female', '456 XYZ Street', '2023', 11, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S015', 'Nguyen Thi LL', '2001-02-02', 'nguyenthibi14@example.com', '9876543225', 'Female', '456 XYZ Street', '2023', 12, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S016', 'Nguyen Thi TT', '2001-02-02', 'nguyenthibm15@example.com', '9876543226', 'Female', '456 XYZ Street', '2023', 13, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S017', 'Nguyen Thi BR', '2001-02-02', 'nguyenthibf16@example.com', '9876543227', 'Female', '456 XYZ Street', '2023', 14, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S018', 'Nguyen Thi BH', '2001-02-02', 'nguyenthibe17@example.com', '9876543228', 'Female', '456 XYZ Street', '2023', 15, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S019', 'Nguyen Thi BK', '2001-02-02', 'nguyenthibr18@example.com', '9876543229', 'Female', '456 XYZ Street', '2023', 16, CURRENT_TIMESTAMP, 'VuLH26'),
+  ('S020', 'Nguyen Thi BQ', '2001-02-02', 'nguyenthibe19@example.com', '9876543230', 'Female', '456 XYZ Street', '2023', 17, CURRENT_TIMESTAMP, 'VuLH26');
 
-  INSERT INTO student.students (code, name, dob, email, phone, gender, address, academic_year, account_id, created_at, created_by)
-  VALUES ('S002', 'Nguyen Thi B', '2001-02-02', 'nguyenthib@example.com', '987654321', 'Female', '456 XYZ Street', '2023', 1, CURRENT_TIMESTAMP, 'Admin');
+
+
+
 
   INSERT INTO student.student_course (course_id, student_id)
-  VALUES (1, 1);
+  VALUES (1, 1),
+         (2, 2),
+         (1, 3),
+         (3, 4),
+         (1, 5),
+         (3, 6),
+         (2, 7),
+         (1, 8),
+         (2, 9),
+         (3, 10),
+         (2, 11),
+         (2, 12),
+         (1, 13),
+         (3, 14),
+         (1, 15),
+         (1, 16),
+         (2, 17),
+         (3, 18),
+         (3, 19),
+         (3, 20);
 
-  INSERT INTO student.student_course (course_id, student_id)
-  VALUES (2, 2);
+--  INSERT INTO student.student_course (course_id, student_id)
+--  VALUES (2, 2);
   INSERT INTO faculty.course_instructor (course_id, instructor_id)
-  VALUES (1, 1);
+  VALUES (1, 1),
+  (2, 3),
+  (2, 2),
+  (3, 3),
+  (2, 1);
 
-  INSERT INTO faculty.course_instructor (course_id, instructor_id)
-  VALUES (2, 1);
+--  INSERT INTO faculty.course_instructor (course_id, instructor_id)
+--  VALUES (2, 1);
 
   INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
-  VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL);
+  VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL),
+  (5.0, 7.0, 6.6, 'b', 2, 2, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 3, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 1, 4, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 2, 5, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 6, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 1, 7, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 2, 8, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 8, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 2, 10, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 1, 11, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 12, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 13, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL);
 
-  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
-  VALUES (7.0, 7.0, 6.6, 'b', 1, 2, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL);
+
+--  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
+--  VALUES (7.0, 7.0, 6.6, 'b', 1, 2, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL);
 
 --  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
 --  VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL);
