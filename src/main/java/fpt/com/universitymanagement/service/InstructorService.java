@@ -6,6 +6,7 @@ import fpt.com.universitymanagement.entity.student.Student;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.OutputStream;
 import java.util.List;
 
 public interface InstructorService {
@@ -14,7 +15,11 @@ public interface InstructorService {
 
     Page<Student> getStudentByCourses(Long id, Pageable pageable);
 
+    List<Student> getStudentByCourses(Long id);
+
     List<GradeReport> getGradeReportByStudentId(Long id);
 
     GradeReport updateGradeReport(Long studentId, GradeReport gradeReport);
+
+    void exportStudentsToExcel(List<Student> students, OutputStream outputStream);
 }

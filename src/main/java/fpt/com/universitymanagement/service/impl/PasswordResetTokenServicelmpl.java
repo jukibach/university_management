@@ -7,6 +7,8 @@ import fpt.com.universitymanagement.repository.PasswordResetTokenRepository;
 import fpt.com.universitymanagement.service.PasswordResetService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,6 +35,7 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
     private JavaMailSender mailSender;
     @Autowired
     private TemplateEngine templateEngine;
+    private static final Logger log = LoggerFactory.getLogger(PasswordResetTokenServicelmpl.class);
 
     @Override
     public void forgotPassword(String email) {
@@ -88,12 +91,12 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             helper.setFrom("huuvule255@gmail.com");
             helper.setTo(email);
-            helper.setSubject("Đặt lại mật khẩu");
+            helper.setSubject("Reset Password");
             helper.setText(htmlContent, true);
 
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            log.error("Unable to send email:", e);
         }
     }
 }

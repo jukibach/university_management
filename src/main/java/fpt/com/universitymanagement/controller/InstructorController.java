@@ -11,18 +11,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import static fpt.com.universitymanagement.common.Constant.ACCOUNT_CONTROLLER;
+import static fpt.com.universitymanagement.common.Constant.INSTRUCTOR_CONTROLLER;
+
 
 @RestController
-@RequestMapping(ACCOUNT_CONTROLLER)
+@RequestMapping(INSTRUCTOR_CONTROLLER)
 public class InstructorController {
 
     @Autowired
@@ -91,5 +97,20 @@ public class InstructorController {
         return instructorService.updateGradeReport(studentId, gradeReport);
     }
 
+    @GetMapping("/excel")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> exportStudentInCourse(@RequestParam Long id) {
+        List<Student> students = instructorService.getStudentByCourses(id);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        instructorService.exportStudentsToExcel(students, out);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=students.xls");
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(new ByteArrayInputStream(out.toByteArray())));
+    }
 
 }

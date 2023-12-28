@@ -479,8 +479,6 @@ VALUES
   (3, 3),
   (2, 1);
 
---  INSERT INTO faculty.course_instructor (course_id, instructor_id)
---  VALUES (2, 1);
 
   INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
   VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL),
@@ -497,12 +495,3 @@ VALUES
   (7.0, 7.0, 6.6, 'b', 3, 12, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 3, 13, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL);
 
-
---  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
---  VALUES (7.0, 7.0, 6.6, 'b', 1, 2, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL);
-
---  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
---  VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL);
---
---  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
---  VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL);
