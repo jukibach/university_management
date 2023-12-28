@@ -1,9 +1,12 @@
 package fpt.com.universitymanagement.controller;
 
-import fpt.com.universitymanagement.dto.*;
+import fpt.com.universitymanagement.dto.LoginRequest;
+import fpt.com.universitymanagement.dto.LoginResponse;
+import fpt.com.universitymanagement.dto.RefreshTokenRequest;
+import fpt.com.universitymanagement.dto.SignOutValidationRequest;
+import fpt.com.universitymanagement.dto.TokenRefreshResponse;
 import fpt.com.universitymanagement.exception.ErrorMessage;
 import fpt.com.universitymanagement.service.AccountService;
-import fpt.com.universitymanagement.service.RefreshTokenService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
@@ -13,7 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +29,18 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static fpt.com.universitymanagement.common.Constant.AUTH_CONTROLLER;
+import static fpt.com.universitymanagement.common.Constant.*;
 
 @RestController
 @RequestMapping(AUTH_CONTROLLER)
 public class AuthController {
     private final AccountService accountService;
-    private final RefreshTokenService refreshTokenService;
     
-    public AuthController(AccountService accountService, RefreshTokenService refreshTokenService) {
+    public AuthController(AccountService accountService) {
         this.accountService = accountService;
-        this.refreshTokenService = refreshTokenService;
     }
     
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
@@ -54,12 +56,29 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, WebRequest request) {
         String key = loginRequest.getUserName();
-        Bucket bucket = cache.computeIfAbsent(key, this::createNewBucket);
-        
+        Bucket bucket = cache.computeIfAbsent(key, k -> createNewBucket());
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
-            LoginResponse loginResponse = accountService.authenticateUser(loginRequest);
+            LoginResponse loginResponse = accountService.login(loginRequest);
+            if (Objects.equals(loginResponse.getMessage(), "Incorrect password")) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new LoginResponse(
+                                null,
+                                loginResponse.getMessage(),
+                                false
+                        ));
+            }
             cache.remove(key);
+            if (loginResponse.isAnotherTokensExists()) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(new LoginResponse(
+                                loginResponse.getAccessToken(),
+                                "There are login sessions in another devices. Do you want to keep this session ?",
+                                true
+                        ));
+            }
             return ResponseEntity.ok(loginResponse);
         } else {
             // Too many requests
@@ -74,36 +93,42 @@ public class AuthController {
         }
     }
     
-//     @PostMapping("/logout")
-//     public ResponseEntity<Object> logout(HttpServletRequest request) {
-//         accountService.logout(request);
-//         return new ResponseEntity<>("Logout", HttpStatus.NO_CONTENT);
-//     }
-
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logged out successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+            })})
+    @Operation(summary = "Log out for a login session")
+    @PostMapping("/logout")
+    public ResponseEntity<Object> signOut(@RequestBody String accessToken) {
+        accountService.logout(accessToken);
+        return ResponseEntity.ok("Logout successfully");
+    }
+    
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Signed out successfully!", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+            })})
+    @Operation(summary = "Sign out all login sessions except the latest login session")
+    @PostMapping("/sign-out-validation")
+    public ResponseEntity<Object> validateSignOut(@Valid @RequestBody SignOutValidationRequest signOutValidationRequest) {
+        Map<String, String> signOutValidationResponse = accountService.signOutValidation(signOutValidationRequest);
+        return new ResponseEntity<>(signOutValidationResponse, HttpStatus.OK);
+    }
+    
     @Operation(summary = "Refresh token for an account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refreshed successfully!", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TokenRefreshResponse.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Refresh token is not in database!", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
             })})
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/refresh-token")
-    public ResponseEntity<Object> refreshToken(@Valid @RequestBody TokenRefreshRequest dto, WebRequest request) {
-        TokenRefreshResponse token = refreshTokenService.refreshToken(dto);
-        if (token != null) {
-            return ResponseEntity.ok(token);
-        }
-        return new ResponseEntity<>(new ErrorMessage(
-                HttpStatus.FORBIDDEN.value(),
-                new Date(),
-                String.format("Failed for [%s]: %s", dto.getRefreshToken(), "Refresh token is not in database!"),
-                request.getDescription(false)), HttpStatus.FORBIDDEN);
+    public ResponseEntity<Object> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return ResponseEntity.ok(accountService.refreshToken(refreshTokenRequest));
     }
     
-    private Bucket createNewBucket(String s) {
+    private Bucket createNewBucket() {
         return new LocalBucketBuilder()
-                .addLimit(Bandwidth.simple(5, Duration.ofHours(1))) // Example: 5 requests per hour
+                .addLimit(Bandwidth.simple(LIMITED_ATTEMPTS, Duration.ofHours(LIMITED_DURATION))) // Example: 5 requests per hour
                 .build();
     }
     
