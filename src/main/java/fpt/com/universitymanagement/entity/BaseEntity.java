@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -29,7 +30,7 @@ public class BaseEntity {
     
     @PrePersist
     private void onCreate() {
-        if (this.createdBy == null) {
+        if (!StringUtils.hasText(this.createdBy)) {
             this.createdBy = SecurityUtils.getAuthentication();
             this.createdAt = Timestamp.from(Instant.now());
         }
@@ -37,7 +38,7 @@ public class BaseEntity {
     
     @PreUpdate
     private void onUpdate() {
-        if (this.updatedBy == null) {
+        if (!StringUtils.hasText(this.updatedBy)) {
             this.updatedBy = SecurityUtils.getAuthentication();
             this.updatedAt = Timestamp.from(Instant.now());
         }
