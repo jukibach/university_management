@@ -13,11 +13,8 @@ import fpt.com.universitymanagement.specification.AccountSpecification;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,38 +26,39 @@ import static fpt.com.universitymanagement.common.Constant.MILLISECONDS;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-    private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final AccountRepository accountRepository;
     private final AccessTokenRepository accessTokenRepository;
     @Value("${app.jwtExpirationMs}")
     private long jwtExpirationMs;
+    private final AccountMapper accountMapper;
     
-    public AccountServiceImpl(AccountRepository accountRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils, AccessTokenRepository accessTokenRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, JwtUtils jwtUtils, AccessTokenRepository accessTokenRepository, AccountMapper accountMapper) {
         this.accountRepository = accountRepository;
-        this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.accessTokenRepository = accessTokenRepository;
+        this.accountMapper = accountMapper;
     }
     
     @Override
     public Page<AccountResponse> getAllAccounts(Pageable pageable, String searchInput) {
         AccountSpecification accountSpecification = new AccountSpecification(searchInput);
         Page<Account> accounts = accountRepository.findAll(accountSpecification, pageable);
-        return accounts.map(AccountMapper.INSTANCE::accountToAccountResponse);
+        return accounts.map(accountMapper::accountToAccountResponse);
     }
     
     @Override
     @Transactional
     public LoginResponse login(LoginRequest loginRequest) {
         LoginResponse loginResponse = new LoginResponse();
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         
         Optional<Account> account = accountRepository.findByUserName(loginRequest.getUserName());
         if (account.isEmpty()) {
             throw new UsernameNotFoundException("Username does not exist");
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(loginRequest.getPassword(), account.get().getPassword())) {
+            throw new UsernameNotFoundException("Incorrect password");
         }
         boolean tokenExists = !account.get().getAccessTokens().isEmpty();
         loginResponse.setAccessToken(getJwt(account.get()));
@@ -78,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
         }
         account.get().setActivated(request.isActivated());
         account = Optional.of(accountRepository.save(account.get()));
-        return account.map(AccountMapper.INSTANCE::accountToAccountResponse).orElse(null);
+        return account.map(accountMapper::accountToAccountResponse).orElse(null);
     }
     
     @Override

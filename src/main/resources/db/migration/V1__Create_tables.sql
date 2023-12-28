@@ -1,7 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS account;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE account.accounts
+CREATE TABLE IF NOT EXISTS account.accounts
 (
     id           BIGSERIAL PRIMARY KEY,
     user_name    VARCHAR(255) NOT NULL UNIQUE,
@@ -16,7 +16,7 @@ CREATE TABLE account.accounts
 
 CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
 
-CREATE TABLE account.access_token
+CREATE TABLE IF NOT EXISTS account.access_token
 (
     id          BIGSERIAL PRIMARY KEY,
     token       VARCHAR(255) NOT NULL UNIQUE,
@@ -29,7 +29,7 @@ CREATE TABLE account.access_token
     FOREIGN KEY (account_id) REFERENCES account.accounts (id)
 );
 
-CREATE TABLE account.permissions
+CREATE TABLE IF NOT EXISTS account.permissions
 (
     id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE account.permissions
 
 CREATE INDEX idx_permission_name ON account.permissions (name);
 
-CREATE TABLE account.roles
+CREATE TABLE IF NOT EXISTS account.roles
 (
     id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
@@ -55,21 +55,21 @@ CREATE TABLE account.roles
 
 CREATE INDEX idx_role_name ON account.roles (name);
 
-CREATE TABLE account.role_account
+CREATE TABLE IF NOT EXISTS account.role_account
 (
     id         BIGSERIAL PRIMARY KEY,
     role_id    BIGSERIAL REFERENCES account.roles (id),
     account_id BIGSERIAL REFERENCES account.accounts (id)
 );
 
-CREATE TABLE account.role_permission
+CREATE TABLE IF NOT EXISTS account.role_permission
 (
     id            BIGSERIAL PRIMARY KEY,
     role_id       BIGSERIAL REFERENCES account.roles (id),
     permission_id BIGSERIAL REFERENCES account.permissions (id)
 );
 
-CREATE TABLE account.refresh_token
+CREATE TABLE IF NOT EXISTS account.refresh_token
 (
     id          BIGSERIAL PRIMARY KEY,
     account_id  BIGSERIAL,
