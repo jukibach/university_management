@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS account.accounts
     updated_by   VARCHAR(255)
 );
 
-CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
+CREATE INDEX IF NOT EXISTS idx_accounts_user_name ON account.accounts (user_name);
 
 CREATE TABLE IF NOT EXISTS account.access_token
 (
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS account.permissions
     updated_by  VARCHAR(255)
 );
 
-CREATE INDEX idx_permission_name ON account.permissions (name);
+CREATE INDEX IF NOT EXISTS idx_permission_name ON account.permissions (name);
 
 CREATE TABLE IF NOT EXISTS account.roles
 (
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS account.roles
     updated_by  VARCHAR(255)
 );
 
-CREATE INDEX idx_role_name ON account.roles (name);
+CREATE INDEX IF NOT EXISTS idx_role_name ON account.roles (name);
 
 CREATE TABLE IF NOT EXISTS account.role_account
 (
@@ -100,11 +100,14 @@ VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW',
         CURRENT_TIMESTAMP,
         'dungnc', TRUE),
        ('dathq', '$2a$12$GhIDOaYoPrmv5f/bdacbmuR4zs7yFcyfMC15mkJnfJMuVWXO1ZHHW', 'dathq10@fpt.com', CURRENT_TIMESTAMP,
-        'dungnc', TRUE);
+        'dungnc', TRUE)
+ON CONFLICT (user_name) DO NOTHING;
 
 INSERT INTO account.roles (name, description, created_at, created_by)
 VALUES ('ROLE_ADMIN', 'Administrator Role', CURRENT_TIMESTAMP, 'dungnc'),
-       ('ROLE_USER', 'User Role', CURRENT_TIMESTAMP, 'dungnc');
+       ('ROLE_USER', 'User Role', CURRENT_TIMESTAMP, 'dungnc'),
+       ('ROLE_STUDENT', 'Student Role', CURRENT_TIMESTAMP, 'dungnc'),
+       ('ROLE_INSTRUCTOR', 'Instructor Role', CURRENT_TIMESTAMP, 'dungnc');
 
 INSERT INTO account.permissions (name, description, created_at, created_by)
 VALUES ('Read', 'Read Permission', CURRENT_TIMESTAMP, 'dungnc'),
@@ -165,4 +168,16 @@ SELECT r.id, p.id
 FROM account.roles r,
      account.permissions p
 WHERE r.name = 'ROLE_USER'
+  AND p.name = 'Read';
+INSERT INTO account.role_permission (role_id, permission_id)
+SELECT r.id, p.id
+FROM account.roles r,
+     account.permissions p
+WHERE r.name = 'ROLE_STUDENT'
+  AND p.name = 'Read';
+INSERT INTO account.role_permission (role_id, permission_id)
+SELECT r.id, p.id
+FROM account.roles r,
+     account.permissions p
+WHERE r.name = 'ROLE_INSTRUCTOR'
   AND p.name = 'Read';

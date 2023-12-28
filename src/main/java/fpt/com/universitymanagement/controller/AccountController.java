@@ -62,7 +62,7 @@ public class AccountController {
             })
     })
     @GetMapping("/personal-profile")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER' ,'STUDENT', 'INSTRUCTOR')")
     @SecurityRequirement(name = "Bearer Authentication")
     public AccountResponse displayAccountInfo(@RequestParam String accessToken) {
         return accountService.displayAccountInfo(accessToken);
