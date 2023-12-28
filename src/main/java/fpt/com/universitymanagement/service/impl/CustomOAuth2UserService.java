@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.service.impl;
 
-import fpt.com.universitymanagement.entity.CustomOAuth2User;
+import fpt.com.universitymanagement.entity.account.CustomOAuth2User;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

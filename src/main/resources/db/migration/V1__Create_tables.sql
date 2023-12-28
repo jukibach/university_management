@@ -3,15 +3,15 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE account.accounts
 (
-    id         BIGSERIAL PRIMARY KEY,
-    user_name  VARCHAR(255) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL,
-    email      VARCHAR(255) NOT NULL UNIQUE,
-    activated  BOOLEAN      NOT NULL,
-    created_at TIMESTAMP    NOT NULL,
-    updated_at TIMESTAMP,
-    created_by VARCHAR(255) NOT NULL,
-    updated_by VARCHAR(255)
+    id           BIGSERIAL PRIMARY KEY,
+    user_name    VARCHAR(255) NOT NULL UNIQUE,
+    password     VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) NOT NULL UNIQUE,
+    is_activated BOOLEAN      NOT NULL,
+    created_at   TIMESTAMP    NOT NULL,
+    updated_at   TIMESTAMP,
+    created_by   VARCHAR(255) NOT NULL,
+    updated_by   VARCHAR(255)
 );
 
 CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
@@ -84,7 +84,7 @@ CREATE TABLE account.refresh_token
 );
 
 -- Insert sample data
-INSERT INTO account.accounts (user_name, password, email, created_at, created_by, activated)
+INSERT INTO account.accounts (user_name, password, email, created_at, created_by, is_activated)
 VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW', 'admin@gmail.com',
         CURRENT_TIMESTAMP,
         'admin', TRUE),

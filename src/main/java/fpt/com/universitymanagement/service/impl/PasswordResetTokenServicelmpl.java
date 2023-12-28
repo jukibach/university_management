@@ -1,6 +1,7 @@
 package fpt.com.universitymanagement.service.impl;
-import fpt.com.universitymanagement.entity.Account;
+
 import fpt.com.universitymanagement.entity.PasswordResetToken;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.repository.AccountRepository;
 import fpt.com.universitymanagement.repository.PasswordResetTokenRepository;
 import fpt.com.universitymanagement.service.PasswordResetService;
@@ -9,11 +10,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.Random;
+
 @Service
 public class PasswordResetTokenServicelmpl implements PasswordResetService {
 

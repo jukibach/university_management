@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.entity.department;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.salary.Salary;
 import jakarta.persistence.*;

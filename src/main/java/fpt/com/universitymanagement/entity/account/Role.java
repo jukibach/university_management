@@ -1,5 +1,6 @@
-package fpt.com.universitymanagement.entity;
+package fpt.com.universitymanagement.entity.account;
 
+import fpt.com.universitymanagement.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,10 +8,10 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Table(name = "permissions", schema = "account")
+@Table(name = "roles", schema = "account")
 @Getter
 @Setter
-public class Permission extends BaseEntity {
+public class Role extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
@@ -19,6 +20,8 @@ public class Permission extends BaseEntity {
     private String name;
     @Column(name = "description")
     private String description;
-    @OneToMany(mappedBy = "permission", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     Set<RolePermission> rolePermissions;
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    Set<RoleAccount> roleAccounts;
 }

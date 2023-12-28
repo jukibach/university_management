@@ -1,5 +1,6 @@
 package fpt.com.universitymanagement.entity;
 
+import fpt.com.universitymanagement.entity.account.Account;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

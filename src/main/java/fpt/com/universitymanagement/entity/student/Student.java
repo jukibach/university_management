@@ -1,8 +1,8 @@
 package fpt.com.universitymanagement.entity.student;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fpt.com.universitymanagement.entity.Account;
 import fpt.com.universitymanagement.entity.BaseEntity;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.entity.faculty.Classes;
 import fpt.com.universitymanagement.entity.timetable.TimeTable;
 import jakarta.persistence.*;
@@ -13,7 +13,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -61,7 +60,7 @@ public class Student extends BaseEntity {
     @JoinColumn(name = "class_id")
     private Classes aClass;
     @JsonIgnore
-    @OneToMany(mappedBy = "student",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentCourse> studentCourses;
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
