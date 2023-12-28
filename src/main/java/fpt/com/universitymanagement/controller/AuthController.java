@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static fpt.com.universitymanagement.common.Constant.*;
@@ -57,6 +58,15 @@ public class AuthController {
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
             LoginResponse loginResponse = accountService.login(loginRequest);
+            if (Objects.equals(loginResponse.getMessage(), "Incorrect password")) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new LoginResponse(
+                                null,
+                                loginResponse.getMessage(),
+                                false
+                        ));
+            }
             cache.remove(key);
             if (loginResponse.isAnotherTokensExists()) {
                 return ResponseEntity
