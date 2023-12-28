@@ -1,9 +1,10 @@
 package fpt.com.universitymanagement.service.impl;
 
-import fpt.com.universitymanagement.config.JwtUtils;
+import fpt.com.universitymanagement.common.JwtUtils;
 import fpt.com.universitymanagement.dto.*;
 import fpt.com.universitymanagement.entity.account.AccessToken;
 import fpt.com.universitymanagement.entity.account.Account;
+import fpt.com.universitymanagement.exception.NotFoundException;
 import fpt.com.universitymanagement.mapper.AccountMapper;
 import fpt.com.universitymanagement.repository.AccessTokenRepository;
 import fpt.com.universitymanagement.repository.AccountRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
         
         Optional<Account> account = accountRepository.findByUserName(loginRequest.getUserName());
         if (account.isEmpty()) {
-            return null;
+            throw new UsernameNotFoundException("Username does not exist");
         }
         boolean tokenExists = !account.get().getAccessTokens().isEmpty();
         loginResponse.setAccessToken(getJwt(account.get()));
@@ -93,6 +95,16 @@ public class AccountServiceImpl implements AccountService {
         }
         accessTokenRepository.deleteAll(accessTokenList);
         return signOutValidationResponse;
+    }
+    
+    @Override
+    public void logout(String accessToken) {
+        accessTokenRepository.delete(findByToken(accessToken));
+    }
+    
+    @Override
+    public AccessToken findByToken(String accessToken) {
+        return accessTokenRepository.findByToken(accessToken).orElseThrow(() -> new NotFoundException("Access token does not exist"));
     }
     
     private String getJwt(Account account) {

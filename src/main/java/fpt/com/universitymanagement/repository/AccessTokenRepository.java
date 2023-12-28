@@ -6,13 +6,15 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
 public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> {
-    boolean existsByAccount_UserName(String token);
-    
     List<AccessToken> findByAccount_Id(long userName);
     
     List<AccessToken> findByExpiryDateBeforeAndAccount_Id(LocalDateTime expiryDate, long accountId);
+    
+    Optional<AccessToken> findByToken(String token);
+    
 }

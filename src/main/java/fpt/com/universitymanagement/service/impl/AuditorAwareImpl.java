@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.service.impl;
 
-import fpt.com.universitymanagement.config.SecurityUtils;
+import fpt.com.universitymanagement.common.SecurityUtils;
 import lombok.NonNull;
 import org.springframework.data.domain.AuditorAware;
 

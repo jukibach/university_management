@@ -1,4 +1,4 @@
-package fpt.com.universitymanagement.config;
+package fpt.com.universitymanagement.common;
 
 import fpt.com.universitymanagement.service.impl.UserDetailsImpl;
 import org.springframework.security.core.Authentication;

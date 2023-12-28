@@ -1,4 +1,4 @@
-package fpt.com.universitymanagement.config;
+package fpt.com.universitymanagement.common;
 
 import java.security.Key;
 import java.util.Date;

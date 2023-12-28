@@ -1,9 +1,12 @@
 package fpt.com.universitymanagement.config;
 
+import fpt.com.universitymanagement.common.JwtUtils;
+import fpt.com.universitymanagement.service.AccountService;
 import fpt.com.universitymanagement.service.impl.AuditorAwareImpl;
 import fpt.com.universitymanagement.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,11 +31,14 @@ public class WebSecurityConfig {
     
     private final CustomAccessDeniedHandler accessDeniedHandler;
     
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, AuthEntryPointJwt unauthorizedHandler, CustomAccessDeniedHandler accessDeniedHandler) {
+    private final AccountService accountService;
+    
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, AuthEntryPointJwt unauthorizedHandler, CustomAccessDeniedHandler accessDeniedHandler, @Lazy AccountService accountService) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
         this.unauthorizedHandler = unauthorizedHandler;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.accountService = accountService;
     }
     
     @Bean
@@ -42,7 +48,7 @@ public class WebSecurityConfig {
     
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter(userDetailsService, jwtUtils);
+        return new AuthTokenFilter(userDetailsService, jwtUtils, accountService);
     }
     
     @Bean
