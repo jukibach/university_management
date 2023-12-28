@@ -1,7 +1,8 @@
 package fpt.com.universitymanagement.entity.student;
 
-import fpt.com.universitymanagement.entity.account.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fpt.com.universitymanagement.entity.BaseEntity;
+import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.entity.faculty.Classes;
 import fpt.com.universitymanagement.entity.timetable.TimeTable;
 import jakarta.persistence.*;
@@ -12,7 +13,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -28,9 +28,9 @@ import java.util.UUID;
 public class Student extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String code;
@@ -55,29 +55,29 @@ public class Student extends BaseEntity {
 
     @Column(nullable = false)
     private String academicYear;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "class_id")
     private Classes aClass;
-
-    @OneToMany(mappedBy = "student",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentCourse> studentCourses;
-
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "guardian_id")
     private Guardian guardian;
-
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "timetable_id", nullable = false)
+    @JoinColumn(name = "timetable_id")
     private TimeTable timetable;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentExam> studentExam;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<GradeReport> gradeReports;
 

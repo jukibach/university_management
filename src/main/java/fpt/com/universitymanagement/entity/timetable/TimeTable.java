@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "timetable_session", schema = "timetable")
+@Table(name = "timetable", schema = "timetable")
 public class TimeTable {
 
     @Id

@@ -1,5 +1,6 @@
 package fpt.com.universitymanagement.entity.student;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.faculty.Instructor;
 import jakarta.persistence.*;
@@ -29,10 +30,12 @@ public class GradeReport extends BaseEntity {
 
     private String grades;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
     private Instructor instructor;
