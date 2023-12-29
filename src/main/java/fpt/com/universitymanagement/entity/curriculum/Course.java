@@ -1,8 +1,9 @@
 package fpt.com.universitymanagement.entity.curriculum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.faculty.CourseInstructor;
-import fpt.com.universitymanagement.entity.student.StudentCourse;
+import fpt.com.universitymanagement.entity.student.StudentCourseGradeReport;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,29 +46,29 @@ public class Course extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate startTime;
-
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Exam> exams;
-
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CurriculumCourse> curriculumCourses;
-
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseInstructor> courseInstructors;
-
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CoursePrerequisite> coursePrerequisites;
-
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseSemester> courseSemesters;
-
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Session> sessions;
-
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses;
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<StudentCourseGradeReport> studentCoursGradeReports;
 }
