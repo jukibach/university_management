@@ -1,11 +1,10 @@
 package fpt.com.universitymanagement.repository;
 
 import fpt.com.universitymanagement.entity.student.GradeReport;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.util.List;
 
-public interface GradeReportRepository extends JpaRepository<GradeReport, Long> {
-    List<GradeReport> findAll(Specification<GradeReport> gradeReportSpec);
+public interface GradeReportRepository extends JpaRepository<GradeReport, Long>, JpaSpecificationExecutor<GradeReport> {
+
 }

@@ -1,6 +1,5 @@
 package fpt.com.universitymanagement.entity.student;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import fpt.com.universitymanagement.entity.curriculum.Course;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,7 +30,7 @@ public class StudentCourseGradeReport {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "studentCourseGradeReport", cascade = CascadeType.ALL)
     private List<GradeReport> gradeReports;
 

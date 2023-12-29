@@ -1,6 +1,5 @@
 package fpt.com.universitymanagement.dto;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class StudentResponse {
+public class InstructorResponse {
 
     private String code;
     private String name;
@@ -17,5 +16,4 @@ public class StudentResponse {
     private String email;
     private String phone;
     private String address;
-    private String academicYear;
 }

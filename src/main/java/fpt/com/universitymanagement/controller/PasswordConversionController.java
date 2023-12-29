@@ -21,12 +21,12 @@ public class PasswordConversionController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+    public ResponseEntity<String> resetPassword(@RequestParam String otp, @RequestParam String newPassword, @RequestParam String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
             return ResponseEntity.badRequest().body("incorrect password");
         }
         try {
-            passwordConversionService.resetPassword(token, newPassword, confirmPassword);
+            passwordConversionService.resetPassword(otp, newPassword, confirmPassword);
             return ResponseEntity.ok("Password reset successfully.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error resetting password: " + e.getMessage());

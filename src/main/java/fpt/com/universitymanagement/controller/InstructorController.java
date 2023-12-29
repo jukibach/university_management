@@ -1,15 +1,13 @@
 package fpt.com.universitymanagement.controller;
 
 import fpt.com.universitymanagement.dto.CoursesResponse;
-import fpt.com.universitymanagement.entity.curriculum.Course;
+import fpt.com.universitymanagement.dto.GradeReportResponse;
+import fpt.com.universitymanagement.dto.InstructorResponse;
+import fpt.com.universitymanagement.dto.StudentResponse;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
+import fpt.com.universitymanagement.service.ApiResponseOperation;
 import fpt.com.universitymanagement.service.InstructorService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -37,68 +35,40 @@ public class InstructorController {
 
     @GetMapping("/courses")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get list of courses by instructor code")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the course list",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CoursesResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid course ID provided"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<Page<Course>> getCourseList(
+    @ApiResponseOperation
+    public ResponseEntity<Page<CoursesResponse>> getCourseList(
             @RequestParam String instructorCode,
             Pageable pageable) {
-        Page<Course> coursePage = instructorService.getCoursesByFindByCode(instructorCode, pageable);
-        return ResponseEntity.ok(coursePage);
+        return ResponseEntity.ok(instructorService.getCoursesByFindByCode(instructorCode, pageable));
     }
 
     @GetMapping("/students")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get list of students by course ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the student list"),
-            @ApiResponse(responseCode = "400", description = "Invalid course ID provided"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<Page<Student>> studentList(
+    @ApiResponseOperation
+    public ResponseEntity<Page<StudentResponse>> studentList(
             @RequestParam Long id, Pageable pageable) {
-        Page<Student> students = instructorService.getStudentByCourses(id, pageable);
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(instructorService.getStudentByCourses(id, pageable));
     }
 
     @GetMapping("/gradeReport")
-    @Operation(summary = "Get grade reports by student ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the grade reports"),
-            @ApiResponse(responseCode = "400", description = "Invalid student ID provided"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public List<GradeReport> gradeReports(@RequestParam Long id) {
-        return instructorService.getGradeReportByStudentId(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponseOperation
+    public ResponseEntity<List<GradeReportResponse>> gradeReports(@RequestParam Long id) {
+        return ResponseEntity.ok(instructorService.getGradeReportByStudentId(id));
+
     }
 
     @PutMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Update grade report for a student")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated the grade report"),
-            @ApiResponse(responseCode = "400", description = "Invalid student ID or grade report provided"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public GradeReport updateGradeReport(@RequestBody GradeReport gradeReport) {
-        return instructorService.updateGradeReport(gradeReport);
+    @ApiResponseOperation
+    public ResponseEntity<GradeReport> updateGradeReport(@RequestBody GradeReport gradeReport) {
+        GradeReport gradeReports = instructorService.updateGradeReport(gradeReport);
+        return ResponseEntity.ok(gradeReports);
     }
 
     @GetMapping("/excel")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponseOperation
     @ResponseBody
     public ResponseEntity<InputStreamResource> exportStudentInCourse(@RequestParam Long id) {
         List<Student> students = instructorService.getStudentByCourses(id);
@@ -108,6 +78,12 @@ public class InstructorController {
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=students.xls");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(new ByteArrayInputStream(out.toByteArray())));
+    }
+
+    @GetMapping("/instructors")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<InstructorResponse>> searchInstructor(Pageable pageable, String searchInput) {
+        return ResponseEntity.ok(instructorService.searchInstructor(pageable, searchInput));
     }
 
 }

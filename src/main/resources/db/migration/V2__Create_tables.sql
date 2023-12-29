@@ -482,8 +482,8 @@ VALUES
 
   INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_course_grader_id, created_at, updated_at, created_by, updated_by)
   VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL),
-  (5.0, 7.0, 6.6, 'b', 2, 1, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
-  (7.0, 7.0, 6.6, 'b', 3, 1, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (5.0, 7.0, 6.6, 'b', 2, 2, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 3, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 1, 4, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 2, 5, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 3, 6, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface PasswordConversionRepository extends JpaRepository<PasswordConversion, Long> {
 
-    Optional<PasswordConversion> findByToken(String token);
+    Optional<PasswordConversion> findByToken(String otp);
 }

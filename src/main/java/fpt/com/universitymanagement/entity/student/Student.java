@@ -1,6 +1,5 @@
 package fpt.com.universitymanagement.entity.student;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.entity.faculty.Classes;
@@ -55,26 +54,26 @@ public class Student extends BaseEntity {
 
     @Column(nullable = false)
     private String academicYear;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "class_id")
     private Classes aClass;
-    @JsonIgnore
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<StudentCourseGradeReport> studentCoursGradeReports;
-    @JsonIgnore
+    private List<StudentCourseGradeReport> studentCourseGradeReports;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "guardian_id")
     private Guardian guardian;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "timetable_id")
     private TimeTable timetable;
-    @JsonIgnore
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentExam> studentExam;
 

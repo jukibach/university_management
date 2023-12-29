@@ -1,7 +1,12 @@
 package fpt.com.universitymanagement.service.impl;
 
+import fpt.com.universitymanagement.dto.CoursesResponse;
+import fpt.com.universitymanagement.dto.GradeReportResponse;
+import fpt.com.universitymanagement.dto.InstructorResponse;
+import fpt.com.universitymanagement.dto.StudentResponse;
 import fpt.com.universitymanagement.entity.curriculum.Course;
 import fpt.com.universitymanagement.entity.faculty.CourseInstructor;
+import fpt.com.universitymanagement.entity.faculty.Instructor;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
 import fpt.com.universitymanagement.entity.student.StudentCourseGradeReport;
@@ -10,6 +15,7 @@ import fpt.com.universitymanagement.repository.GradeReportRepository;
 import fpt.com.universitymanagement.repository.InstructorsRepository;
 import fpt.com.universitymanagement.repository.StudentRepository;
 import fpt.com.universitymanagement.service.InstructorService;
+import fpt.com.universitymanagement.specification.InstrucTorSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -26,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class InstructorServicelmpl implements InstructorService {
@@ -41,21 +48,47 @@ public class InstructorServicelmpl implements InstructorService {
     private static final Logger log = LoggerFactory.getLogger(InstructorServicelmpl.class);
 
     @Override
-    public Page<Course> getCoursesByFindByCode(String code, Pageable pageable) {
+    public Page<CoursesResponse> getCoursesByFindByCode(String code, Pageable pageable) {
         Specification<Course> courseInstructorSpec = (root, query, criteriaBuilder) -> {
             Join<Course, CourseInstructor> courseInstructorJoin = root.join("courseInstructors");
             return criteriaBuilder.equal(courseInstructorJoin.get("instructor").get("code"), code);
         };
-        return coursesRepository.findAll(courseInstructorSpec, pageable);
+        Page<Course> coursePage = coursesRepository.findAll(courseInstructorSpec, pageable);
+        return coursePage.map(this::convertToCourseDTO);
+    }
+
+    private CoursesResponse convertToCourseDTO(Course course) {
+        CoursesResponse courseDTO = new CoursesResponse();
+        courseDTO.setCode(course.getCode());
+        courseDTO.setName(course.getName());
+        courseDTO.setCredits(course.getCredits());
+        courseDTO.setDescription(course.getDescription());
+        courseDTO.setStartTime(course.getStartTime());
+        courseDTO.setStartDay(course.getStartDay());
+        return courseDTO;
     }
 
     @Override
-    public Page<Student> getStudentByCourses(Long id, Pageable pageable) {
+    public Page<StudentResponse> getStudentByCourses(Long id, Pageable pageable) {
         Specification<Student> studentSpec = (root, query, criteriaBuilder) -> {
-            Join<Student, StudentCourseGradeReport> studentCourseJoin = root.join("studentCourses");
+            Join<Student, StudentCourseGradeReport> studentCourseJoin = root.join("studentCourseGradeReports");
             return criteriaBuilder.equal(studentCourseJoin.get("course").get("id"), id);
         };
-        return studentRepository.findAll(studentSpec, pageable);
+        Page<Student> students = studentRepository.findAll(studentSpec, pageable);
+        return students.map(this::convertToStudentDTO);
+    }
+
+    private StudentResponse convertToStudentDTO(Student student) {
+        StudentResponse studentResponse = new StudentResponse();
+        studentResponse.setCode(student.getCode());
+        studentResponse.setName(student.getName());
+        studentResponse.setDob(student.getDob());
+        studentResponse.setEmail(student.getEmail());
+        studentResponse.setAcademicYear(student.getAcademicYear());
+        studentResponse.setAddress(student.getAddress());
+        studentResponse.setGender(student.getGender());
+        studentResponse.setPhone(student.getPhone());
+        return studentResponse;
     }
 
     @Override
@@ -68,12 +101,24 @@ public class InstructorServicelmpl implements InstructorService {
     }
 
     @Override
-    public List<GradeReport> getGradeReportByStudentId(Long id) {
+    public List<GradeReportResponse> getGradeReportByStudentId(Long id) {
         Specification<GradeReport> gradeReportSpec = (root, query, criteriaBuilder) -> {
             Join<GradeReport, StudentCourseGradeReport> gradeReportStudentJoin = root.join("studentCourseGradeReport");
-            return criteriaBuilder.equal(gradeReportStudentJoin.get("gradeReports").get("id"), id);
+            return criteriaBuilder.equal(gradeReportStudentJoin.get("student").get("id"), id);
         };
-        return gradeReportRepository.findAll(gradeReportSpec);
+        List<GradeReport> gradeReportList = gradeReportRepository.findAll(gradeReportSpec);
+        return gradeReportList.stream()
+                .map(this::convertToGradeDTO)
+                .collect(Collectors.toList());
+    }
+
+    private GradeReportResponse convertToGradeDTO(GradeReport gradeReport) {
+        GradeReportResponse gradeReportResponse = new GradeReportResponse();
+        gradeReportResponse.setPointProcess(gradeReport.getPointProcess());
+        gradeReportResponse.setPointEndCourse(gradeReport.getPointEndCourse());
+        gradeReportResponse.setTotalMark(gradeReport.getTotalMark());
+        gradeReportResponse.setGrades(gradeReport.getGrades());
+        return gradeReportResponse;
     }
 
     @Override
@@ -128,5 +173,30 @@ public class InstructorServicelmpl implements InstructorService {
         } catch (Exception e) {
             log.error("Error exporting Excel file:", e);
         }
+    }
+
+    @Override
+    public InstructorResponse getInstructorByCode(String code) {
+        Instructor instructor = instructorsRepository.findByCode(code);
+        return convertToInstructorDTO(instructor);
+    }
+
+    private InstructorResponse convertToInstructorDTO(Instructor instructor) {
+        InstructorResponse instructorResponse = new InstructorResponse();
+        instructorResponse.setCode(instructor.getCode());
+        instructorResponse.setName(instructor.getName());
+        instructorResponse.setDob(instructor.getDob());
+        instructorResponse.setEmail(instructor.getEmail());
+        instructorResponse.setGender(instructor.getGender());
+        instructorResponse.setPhone(instructor.getPhone());
+        instructorResponse.setAddress(instructor.getAddress());
+        return instructorResponse;
+    }
+
+    @Override
+    public Page<InstructorResponse> searchInstructor(Pageable pageable, String searchInput) {
+        InstrucTorSpecification instrucTorSpecification = new InstrucTorSpecification(searchInput);
+        Page<Instructor> instructors = instructorsRepository.findAll(instrucTorSpecification, pageable);
+        return instructors.map(this::convertToInstructorDTO);
     }
 }

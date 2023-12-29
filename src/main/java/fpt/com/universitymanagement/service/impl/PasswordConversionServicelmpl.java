@@ -36,6 +36,10 @@ public class PasswordConversionServicelmpl implements PasswordConversionService 
     @Autowired
     private TemplateEngine templateEngine;
     private static final Logger log = LoggerFactory.getLogger(PasswordConversionServicelmpl.class);
+    private static final int OTP_MIN_RANGE = 100000;
+    private static final int OTP_MAX_RANGE = 999999;
+    private static final String FROM_EMAIL = "huuvule255@gmail.com";
+    private static final String EMAIL_SUBJECT = "Reset Password";
 
     @Override
     public void forgotPassword(String email) {
@@ -53,8 +57,8 @@ public class PasswordConversionServicelmpl implements PasswordConversionService 
     }
 
     @Override
-    public void resetPassword(String token, String newPassword, String confirmPassword) {
-        Optional<PasswordConversion> getToken = passwordConversionRepository.findByToken(token);
+    public void resetPassword(String otp, String newPassword, String confirmPassword) {
+        Optional<PasswordConversion> getToken = passwordConversionRepository.findByToken(otp);
         if (getToken.isEmpty()) {
             return;
         }
@@ -73,22 +77,22 @@ public class PasswordConversionServicelmpl implements PasswordConversionService 
     public String generateResetToken() {
         // Generate a random 6-digit numeric OTP
         Random random = new SecureRandom();
-        int otp = 100000 + random.nextInt(900000);
+        int otp = OTP_MIN_RANGE + random.nextInt(OTP_MAX_RANGE);
         return String.valueOf(otp);
     }
 
     @Override
-    public void sendResetEmail(String email, String token) {
+    public void sendResetEmail(String email, String otp) {
         Context context = new Context();
-        String resetLink = "http://huuvu/reset-password?OTP=" + token;
+        String resetLink = "http://huuvu/reset-password?OTP=" + otp;
         context.setVariable("resetLink", resetLink);
         String htmlContent = templateEngine.process("reset_password.html", context);
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setFrom("huuvule255@gmail.com");
+            helper.setFrom(FROM_EMAIL);
             helper.setTo(email);
-            helper.setSubject("Reset Password");
+            helper.setSubject(EMAIL_SUBJECT);
             helper.setText(htmlContent, true);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
