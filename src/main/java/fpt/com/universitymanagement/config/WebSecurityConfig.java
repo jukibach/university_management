@@ -1,26 +1,27 @@
 package fpt.com.universitymanagement.config;
 
-import fpt.com.universitymanagement.service.impl.AuditorAwareImpl;
+import fpt.com.universitymanagement.common.JwtUtils;
+import fpt.com.universitymanagement.service.AccountService;
 import fpt.com.universitymanagement.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static fpt.com.universitymanagement.common.Constant.ACCOUNT_CONTROLLER;
+import static fpt.com.universitymanagement.common.Constant.AUTH_CONTROLLER;
+
 @Configuration
 @EnableMethodSecurity
-@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtUtils jwtUtils;
@@ -29,21 +30,19 @@ public class WebSecurityConfig {
     
     private final CustomAccessDeniedHandler accessDeniedHandler;
     
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, AuthEntryPointJwt unauthorizedHandler, CustomAccessDeniedHandler accessDeniedHandler) {
+    private final AccountService accountService;
+    
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils, AuthEntryPointJwt unauthorizedHandler, CustomAccessDeniedHandler accessDeniedHandler, @Lazy AccountService accountService) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
         this.unauthorizedHandler = unauthorizedHandler;
         this.accessDeniedHandler = accessDeniedHandler;
-    }
-    
-    @Bean
-    public AuditorAware<String> auditorProvider() {
-        return new AuditorAwareImpl();
+        this.accountService = accountService;
     }
     
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter(userDetailsService, jwtUtils);
+        return new AuthTokenFilter(userDetailsService, jwtUtils, accountService);
     }
     
     @Bean
@@ -71,12 +70,10 @@ public class WebSecurityConfig {
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(unauthorizedHandler)
                         .accessDeniedHandler(accessDeniedHandler))
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/v1/api/auth/**", "/swagger-ui/**", "/v3/**")
+                        .requestMatchers("/", AUTH_CONTROLLER + "/**", "/swagger-ui/**", "/v3/**")
                         .permitAll()
-                        .requestMatchers("/v1/api/accounts/**")
+                        .requestMatchers(ACCOUNT_CONTROLLER + "/**")
                         .authenticated());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
