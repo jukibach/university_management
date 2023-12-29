@@ -367,7 +367,7 @@ create table if not exists student.grade_report
     instructor_id    BIGSERIAL             not null
         constraint fkqkyw5ljmjiemlr82rcy5iictj
             references faculty.instructors,
-    student_id       BIGSERIAL             not null
+    student_course_grader_id       BIGSERIAL not null
         constraint fknleqou2lxe9cqllvw26k9r709
             references student.students,
    created_at  TIMESTAMP    NOT NULL,
@@ -375,15 +375,16 @@ create table if not exists student.grade_report
      created_by  VARCHAR(255) NOT NULL,
      updated_by  VARCHAR(255)
 );
-create table if not exists student.student_course
+create table if not exists student.student_course_grader
 (
     id         SERIAL PRIMARY KEY,
-    course_id  bigint not null
-        constraint fkejrkh4gv8iqgmspsanaji90ws
-            references curriculum.courses,
-    student_id BIGSERIAL not null
-        constraint fkq7yw2wg9wlt2cnj480hcdn6dq
-            references student.students
+    course_id  BIGSERIAL,
+    student_id BIGSERIAL,
+    constraint fk_course
+        foreign key (course_id) references curriculum.courses,
+    constraint fk_student
+        foreign key (student_id) references student.students,
+    constraint uc_course_student unique (course_id, student_id)
 );
 
 create table if not exists student.student_exam
@@ -448,7 +449,7 @@ VALUES
 
 
 
-  INSERT INTO student.student_course (course_id, student_id)
+  INSERT INTO student.student_course_grader (course_id, student_id)
   VALUES (1, 1),
          (2, 2),
          (1, 3),
@@ -470,8 +471,7 @@ VALUES
          (3, 19),
          (3, 20);
 
---  INSERT INTO student.student_course (course_id, student_id)
---  VALUES (2, 2);
+
   INSERT INTO faculty.course_instructor (course_id, instructor_id)
   VALUES (1, 1),
   (2, 3),
@@ -480,10 +480,10 @@ VALUES
   (2, 1);
 
 
-  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_id, created_at, updated_at, created_by, updated_by)
+  INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_course_grader_id, created_at, updated_at, created_by, updated_by)
   VALUES (8.5, 9.0, 8.8, 'A', 1, 1, CURRENT_TIMESTAMP, NULL, 'Admin', NULL),
-  (5.0, 7.0, 6.6, 'b', 2, 2, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
-  (7.0, 7.0, 6.6, 'b', 3, 3, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (5.0, 7.0, 6.6, 'b', 2, 1, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
+  (7.0, 7.0, 6.6, 'b', 3, 1, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 1, 4, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 2, 5, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),
   (7.0, 7.0, 6.6, 'b', 3, 6, CURRENT_TIMESTAMP, NULL, 'VuLH26', NULL),

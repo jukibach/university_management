@@ -3,8 +3,8 @@ package fpt.com.universitymanagement.service.impl;
 import fpt.com.universitymanagement.entity.PasswordConversion;
 import fpt.com.universitymanagement.entity.account.Account;
 import fpt.com.universitymanagement.repository.AccountRepository;
-import fpt.com.universitymanagement.repository.PasswordResetTokenRepository;
-import fpt.com.universitymanagement.service.PasswordResetService;
+import fpt.com.universitymanagement.repository.PasswordConversionRepository;
+import fpt.com.universitymanagement.service.PasswordConversionService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
@@ -25,17 +25,17 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class PasswordResetTokenServicelmpl implements PasswordResetService {
+public class PasswordConversionServicelmpl implements PasswordConversionService {
 
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
+    private PasswordConversionRepository passwordConversionRepository;
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
     private TemplateEngine templateEngine;
-    private static final Logger log = LoggerFactory.getLogger(PasswordResetTokenServicelmpl.class);
+    private static final Logger log = LoggerFactory.getLogger(PasswordConversionServicelmpl.class);
 
     @Override
     public void forgotPassword(String email) {
@@ -48,14 +48,13 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
         passwordConversion.setToken(token);
         passwordConversion.setAccount(account);
         passwordConversion.setExpiryDate(Instant.now());
-        passwordResetTokenRepository.save(passwordConversion);
+        passwordConversionRepository.save(passwordConversion);
         sendResetEmail(email, token);
     }
 
     @Override
     public void resetPassword(String token, String newPassword, String confirmPassword) {
-
-        Optional<PasswordConversion> getToken = passwordResetTokenRepository.findByToken(token);
+        Optional<PasswordConversion> getToken = passwordConversionRepository.findByToken(token);
         if (getToken.isEmpty()) {
             return;
         }
@@ -66,7 +65,7 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(newPassword);
         account.setPassword(encodedPassword);
-        passwordResetTokenRepository.delete(getToken.get());
+        passwordConversionRepository.delete(getToken.get());
         accountRepository.save(account);
     }
 
@@ -83,9 +82,7 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
         Context context = new Context();
         String resetLink = "http://huuvu/reset-password?OTP=" + token;
         context.setVariable("resetLink", resetLink);
-
         String htmlContent = templateEngine.process("reset_password.html", context);
-
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -93,7 +90,6 @@ public class PasswordResetTokenServicelmpl implements PasswordResetService {
             helper.setTo(email);
             helper.setSubject("Reset Password");
             helper.setText(htmlContent, true);
-
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.error("Unable to send email:", e);

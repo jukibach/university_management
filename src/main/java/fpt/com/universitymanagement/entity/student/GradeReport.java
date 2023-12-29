@@ -32,8 +32,8 @@ public class GradeReport extends BaseEntity {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "student_course_grader_id", nullable = false)
+    private StudentCourseGradeReport studentCourseGradeReport;
 
     @JsonIgnore
     @ManyToOne

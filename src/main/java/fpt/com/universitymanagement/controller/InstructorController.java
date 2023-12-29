@@ -93,8 +93,8 @@ public class InstructorController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public GradeReport updateGradeReport(@RequestParam Long studentId, @RequestBody GradeReport gradeReport) {
-        return instructorService.updateGradeReport(studentId, gradeReport);
+    public GradeReport updateGradeReport(@RequestBody GradeReport gradeReport) {
+        return instructorService.updateGradeReport(gradeReport);
     }
 
     @GetMapping("/excel")
@@ -102,14 +102,11 @@ public class InstructorController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> exportStudentInCourse(@RequestParam Long id) {
         List<Student> students = instructorService.getStudentByCourses(id);
-
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         instructorService.exportStudentsToExcel(students, out);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=students.xls");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(new ByteArrayInputStream(out.toByteArray())));
     }
 

@@ -4,12 +4,13 @@ import fpt.com.universitymanagement.entity.curriculum.Course;
 import fpt.com.universitymanagement.entity.faculty.CourseInstructor;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
-import fpt.com.universitymanagement.entity.student.StudentCourse;
+import fpt.com.universitymanagement.entity.student.StudentCourseGradeReport;
 import fpt.com.universitymanagement.repository.CoursesRepository;
 import fpt.com.universitymanagement.repository.GradeReportRepository;
 import fpt.com.universitymanagement.repository.InstructorsRepository;
 import fpt.com.universitymanagement.repository.StudentRepository;
 import fpt.com.universitymanagement.service.InstructorService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -51,7 +52,7 @@ public class InstructorServicelmpl implements InstructorService {
     @Override
     public Page<Student> getStudentByCourses(Long id, Pageable pageable) {
         Specification<Student> studentSpec = (root, query, criteriaBuilder) -> {
-            Join<Student, StudentCourse> studentCourseJoin = root.join("studentCourses");
+            Join<Student, StudentCourseGradeReport> studentCourseJoin = root.join("studentCourses");
             return criteriaBuilder.equal(studentCourseJoin.get("course").get("id"), id);
         };
         return studentRepository.findAll(studentSpec, pageable);
@@ -60,7 +61,7 @@ public class InstructorServicelmpl implements InstructorService {
     @Override
     public List<Student> getStudentByCourses(Long id) {
         Specification<Student> studentSpec = (root, query, criteriaBuilder) -> {
-            Join<Student, StudentCourse> studentCourseJoin = root.join("studentCourses");
+            Join<Student, StudentCourseGradeReport> studentCourseJoin = root.join("studentCourses");
             return criteriaBuilder.equal(studentCourseJoin.get("course").get("id"), id);
         };
         return studentRepository.findAll(studentSpec);
@@ -69,35 +70,26 @@ public class InstructorServicelmpl implements InstructorService {
     @Override
     public List<GradeReport> getGradeReportByStudentId(Long id) {
         Specification<GradeReport> gradeReportSpec = (root, query, criteriaBuilder) -> {
-            Join<GradeReport, Student> gradeReportStudentJoin = root.join("student");
+            Join<GradeReport, StudentCourseGradeReport> gradeReportStudentJoin = root.join("studentCourseGradeReport");
             return criteriaBuilder.equal(gradeReportStudentJoin.get("gradeReports").get("id"), id);
         };
         return gradeReportRepository.findAll(gradeReportSpec);
     }
 
     @Override
-    public GradeReport updateGradeReport(Long studentId, GradeReport updatedGradeReport) {
-        try {
-            Optional<Student> studentOptional = studentRepository.findById(studentId);
-            if (studentOptional.isPresent()) {
-                List<GradeReport> gradeReports = studentOptional.get().getGradeReports();
-                for (GradeReport gradeReport : gradeReports) {
-                    if (gradeReport.getId().equals(updatedGradeReport.getId())) {
-                        gradeReport.setPointProcess(updatedGradeReport.getPointProcess());
-                        gradeReport.setPointEndCourse(updatedGradeReport.getPointEndCourse());
-                        gradeReport.setTotalMark(updatedGradeReport.getTotalMark());
-                        gradeReport.setGrades(updatedGradeReport.getGrades());
-                        gradeReport.setCreatedAt(updatedGradeReport.getCreatedAt());
-                        gradeReport.setCreatedBy(updatedGradeReport.getCreatedBy());
-                        gradeReportRepository.save(gradeReport);
-                        return gradeReport;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error updating score report:", e);
+    public GradeReport updateGradeReport(GradeReport gradeReport) {
+        if (gradeReport == null || gradeReport.getId() == null) {
+            throw new IllegalArgumentException("GradeReport with ID must be provided");
         }
-        return null;
+        Optional<GradeReport> existingGradeReport = gradeReportRepository.findById(gradeReport.getId());
+        if (existingGradeReport.isEmpty()) {
+            throw new EntityNotFoundException("GradeReport with ID " + gradeReport.getId() + " not found");
+        }
+        existingGradeReport.get().setPointProcess(gradeReport.getPointProcess());
+        existingGradeReport.get().setPointEndCourse(gradeReport.getPointEndCourse());
+        existingGradeReport.get().setTotalMark(gradeReport.getTotalMark());
+        existingGradeReport.get().setGrades(gradeReport.getGrades());
+        return gradeReportRepository.save(existingGradeReport.get());
     }
 
     @Override

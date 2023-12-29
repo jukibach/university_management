@@ -1,6 +1,6 @@
 package fpt.com.universitymanagement.service;
 
-public interface PasswordResetService {
+public interface PasswordConversionService {
     void forgotPassword(String email);
 
     void resetPassword(String resetToken, String newPassword, String confirmPassword);

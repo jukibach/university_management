@@ -3,7 +3,7 @@ package fpt.com.universitymanagement.entity.curriculum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fpt.com.universitymanagement.entity.BaseEntity;
 import fpt.com.universitymanagement.entity.faculty.CourseInstructor;
-import fpt.com.universitymanagement.entity.student.StudentCourse;
+import fpt.com.universitymanagement.entity.student.StudentCourseGradeReport;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,21 +54,21 @@ public class Course extends BaseEntity {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Exam> exams;
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CurriculumCourse> curriculumCourses;
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseInstructor> courseInstructors;
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CoursePrerequisite> coursePrerequisites;
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<CourseSemester> courseSemesters;
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Session> sessions;
     @JsonIgnore
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<StudentCourseGradeReport> studentCoursGradeReports;
 }

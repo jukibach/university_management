@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface PasswordResetTokenRepository extends JpaRepository<PasswordConversion, Long> {
+public interface PasswordConversionRepository extends JpaRepository<PasswordConversion, Long> {
 
     Optional<PasswordConversion> findByToken(String token);
 }

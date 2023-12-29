@@ -19,7 +19,7 @@ public interface InstructorService {
 
     List<GradeReport> getGradeReportByStudentId(Long id);
 
-    GradeReport updateGradeReport(Long studentId, GradeReport gradeReport);
+    GradeReport updateGradeReport(GradeReport gradeReport);
 
     void exportStudentsToExcel(List<Student> students, OutputStream outputStream);
 }

@@ -61,7 +61,7 @@ public class Student extends BaseEntity {
     private Classes aClass;
     @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses;
+    private List<StudentCourseGradeReport> studentCoursGradeReports;
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
@@ -77,8 +77,5 @@ public class Student extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentExam> studentExam;
-    @JsonIgnore
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<GradeReport> gradeReports;
 
 }
