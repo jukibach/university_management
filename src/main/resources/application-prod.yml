@@ -1,0 +1,8 @@
+spring:
+    data:
+        redis:
+            host: redis-university-management.redis.cache.windows.net
+            port: 6380
+            password: b7eUtHDrPh9FL5U764IJh5NgQzsBW40ZyAzCaM0qLp8=
+            ssl:
+                enabled: true

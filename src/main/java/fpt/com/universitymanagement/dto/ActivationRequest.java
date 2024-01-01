@@ -10,5 +10,5 @@ public class ActivationRequest {
     @NotBlank(message = "Username must be non-empty")
     private String userName;
     @NotBlank(message = "Field isActivated must be non-empty")
-    private boolean isActivated;
+    private boolean activated;
 }

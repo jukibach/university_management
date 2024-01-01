@@ -1,9 +1,12 @@
 package fpt.com.universitymanagement.specification;
 
 import fpt.com.universitymanagement.entity.account.Account;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
