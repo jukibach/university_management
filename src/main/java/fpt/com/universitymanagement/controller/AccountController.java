@@ -2,6 +2,7 @@ package fpt.com.universitymanagement.controller;
 
 import fpt.com.universitymanagement.dto.AccountResponse;
 import fpt.com.universitymanagement.dto.ActivationRequest;
+import fpt.com.universitymanagement.dto.UpdateAccountRequest;
 import fpt.com.universitymanagement.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +51,36 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Changed status successfully!", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = AccountResponse.class))
             })})
-    @PostMapping("/active")
+    @PutMapping("/active")
     public ResponseEntity<AccountResponse> switchAccountStatus(@RequestBody ActivationRequest request) {
         return ResponseEntity.ok(accountService.switchAccountStatus(request));
+    }
+    
+    @Operation(summary = "Display personal profile")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Fetched successfully!", content = {
+                    @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = AccountResponse.class)))
+            })
+    })
+    @GetMapping("/personal-profile/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER' ,'STUDENT', 'INSTRUCTOR')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public AccountResponse displayAccountInfo(@PathVariable("id") long accountId) {
+        return accountService.displayAccountInfo(accountId);
+    }
+    
+    @Operation(summary = "Update personal profile")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully!", content = {
+                    @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = AccountResponse.class)))
+            })
+    })
+    @PatchMapping("/personal-profile/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER' ,'STUDENT', 'INSTRUCTOR')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public AccountResponse updateAccountInfo(@PathVariable("id") long accountId, @Valid @RequestBody UpdateAccountRequest accountRequest) {
+        return accountService.updateAccountInfo(accountId, accountRequest);
     }
 }

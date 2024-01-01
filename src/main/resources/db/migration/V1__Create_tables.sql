@@ -1,12 +1,11 @@
 CREATE SCHEMA IF NOT EXISTS account;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE account.accounts
+CREATE TABLE IF NOT EXISTS account.accounts
 (
     id           BIGSERIAL PRIMARY KEY,
     user_name    VARCHAR(255) NOT NULL UNIQUE,
     password     VARCHAR(255) NOT NULL,
-    email        VARCHAR(255) NOT NULL UNIQUE,
     is_activated BOOLEAN      NOT NULL,
     created_at   TIMESTAMP    NOT NULL,
     updated_at   TIMESTAMP,
@@ -14,9 +13,24 @@ CREATE TABLE account.accounts
     updated_by   VARCHAR(255)
 );
 
-CREATE INDEX idx_accounts_user_name ON account.accounts (user_name);
+CREATE INDEX IF NOT EXISTS idx_accounts_user_name ON account.accounts (user_name);
 
-CREATE TABLE account.permissions
+CREATE TABLE IF NOT EXISTS account.login_history
+(
+    id          BIGSERIAL PRIMARY KEY,
+    token       VARCHAR(255) UNIQUE,
+    ip_address  VARCHAR(255) NOT NULL,
+    status      VARCHAR(255) NOT NULL,
+    expiry_date TIMESTAMP,
+    account_id  BIGINT,
+    created_at  TIMESTAMP    NOT NULL,
+    created_by  VARCHAR(255) NOT NULL,
+    updated_at  TIMESTAMP,
+    updated_by  VARCHAR(255),
+    FOREIGN KEY (account_id) REFERENCES account.accounts (id)
+);
+
+CREATE TABLE IF NOT EXISTS account.permissions
 (
     id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
@@ -27,9 +41,9 @@ CREATE TABLE account.permissions
     updated_by  VARCHAR(255)
 );
 
-CREATE INDEX idx_permission_name ON account.permissions (name);
+CREATE INDEX IF NOT EXISTS idx_permission_name ON account.permissions (name);
 
-CREATE TABLE account.roles
+CREATE TABLE IF NOT EXISTS account.roles
 (
     id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
@@ -40,54 +54,41 @@ CREATE TABLE account.roles
     updated_by  VARCHAR(255)
 );
 
-CREATE INDEX idx_role_name ON account.roles (name);
+CREATE INDEX IF NOT EXISTS idx_role_name ON account.roles (name);
 
-CREATE TABLE account.role_account
+CREATE TABLE IF NOT EXISTS account.role_account
 (
     id         BIGSERIAL PRIMARY KEY,
     role_id    BIGSERIAL REFERENCES account.roles (id),
     account_id BIGSERIAL REFERENCES account.accounts (id)
 );
 
-CREATE TABLE account.role_permission
+CREATE TABLE IF NOT EXISTS account.role_permission
 (
     id            BIGSERIAL PRIMARY KEY,
     role_id       BIGSERIAL REFERENCES account.roles (id),
     permission_id BIGSERIAL REFERENCES account.permissions (id)
 );
 
-CREATE TABLE account.refresh_token
-(
-    id          BIGSERIAL PRIMARY KEY,
-    account_id  BIGSERIAL,
-    token       VARCHAR(255) NOT NULL UNIQUE,
-    expiry_date TIMESTAMP    NOT NULL,
-    created_at  TIMESTAMP    NOT NULL,
-    updated_at  TIMESTAMP,
-    created_by  VARCHAR(255) NOT NULL,
-    updated_by  VARCHAR(255),
-    FOREIGN KEY (account_id) REFERENCES account.accounts (id)
-);
-
 -- Insert sample data
-INSERT INTO account.accounts (user_name, password, email, created_at, created_by, is_activated)
-VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW', 'admin@gmail.com',
+INSERT INTO account.accounts (user_name, password, created_at, created_by, is_activated)
+VALUES ('admin', '$2a$12$Vr9c8qtydVi39u4HAHXDGePAHShspu.o1sfZdFt5VQ2fZ2fJIb3MW',
         CURRENT_TIMESTAMP,
         'admin', TRUE),
-       ('user', '$2a$12$aXiUY2khzWepfiOU3ZejJ.GvQu83JC3m8fzfTOaEQfQTjSfthyQWy', 'user@gmail.com',
+       ('user', '$2a$12$aXiUY2khzWepfiOU3ZejJ.GvQu83JC3m8fzfTOaEQfQTjSfthyQWy',
         CURRENT_TIMESTAMP,
         'user', TRUE),
-       ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK', 'dungnc69.420@gmail.com',
+       ('dungnc', '$2a$12$fuXP4tzkIpNpqRIvPC59VesFh/6ojA/gUEtrJmK/YDPvc9Y7D1yYK',
+        CURRENT_TIMESTAMP, 'dungnc', TRUE),
+       ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2',
         CURRENT_TIMESTAMP,
         'dungnc', TRUE),
-       ('jane_doe', '$2a$12$dn.RZxzOM8fxyjerPc30/ufMe.FbXYbI35OyGGRSPzfIN464Y1mi2', 'janedoe@example.com',
+       ('alex_smith', '$2a$12$R.AMxKQntUYWOAQaRl0RDOLcdPW9OUHPSBkG64cVo6LCqtbNqYDhC',
         CURRENT_TIMESTAMP,
         'dungnc', TRUE),
-       ('alex_smith', '$2a$12$R.AMxKQntUYWOAQaRl0RDOLcdPW9OUHPSBkG64cVo6LCqtbNqYDhC', 'alexsmith@example.com',
-        CURRENT_TIMESTAMP,
-        'dungnc', TRUE),
-       ('dathq', '$2a$12$GhIDOaYoPrmv5f/bdacbmuR4zs7yFcyfMC15mkJnfJMuVWXO1ZHHW', 'dathq10@fpt.com', CURRENT_TIMESTAMP,
-        'dungnc', TRUE);
+       ('dathq', '$2a$12$GhIDOaYoPrmv5f/bdacbmuR4zs7yFcyfMC15mkJnfJMuVWXO1ZHHW', CURRENT_TIMESTAMP,
+        'dungnc', TRUE)
+ON CONFLICT DO NOTHING;
 
 INSERT INTO account.roles (name, description, created_at, created_by)
 VALUES ('ROLE_ADMIN', 'Administrator Role', CURRENT_TIMESTAMP, 'dungnc'),
