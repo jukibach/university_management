@@ -10,14 +10,12 @@ import fpt.com.universitymanagement.entity.faculty.Instructor;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
 import fpt.com.universitymanagement.entity.student.StudentCourseGradeReport;
-import fpt.com.universitymanagement.repository.CoursesRepository;
-import fpt.com.universitymanagement.repository.GradeReportRepository;
-import fpt.com.universitymanagement.repository.InstructorsRepository;
-import fpt.com.universitymanagement.repository.StudentRepository;
+import fpt.com.universitymanagement.repository.*;
 import fpt.com.universitymanagement.service.InstructorService;
 import fpt.com.universitymanagement.specification.InstrucTorSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Path;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -28,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -35,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class InstructorServicelmpl implements InstructorService {
 
     @Autowired
@@ -45,7 +45,10 @@ public class InstructorServicelmpl implements InstructorService {
     private CoursesRepository coursesRepository;
     @Autowired
     private GradeReportRepository gradeReportRepository;
+    @Autowired
+    private CourseInstructorsRepository courseInstructorsRepository;
     private static final Logger log = LoggerFactory.getLogger(InstructorServicelmpl.class);
+    private static final String COURSE_LITERAL = "course";
 
     @Override
     public Page<CoursesResponse> getCoursesByFindByCode(String code, Pageable pageable) {
@@ -72,7 +75,7 @@ public class InstructorServicelmpl implements InstructorService {
     public Page<StudentResponse> getStudentByCourses(Long id, Pageable pageable) {
         Specification<Student> studentSpec = (root, query, criteriaBuilder) -> {
             Join<Student, StudentCourseGradeReport> studentCourseJoin = root.join("studentCourseGradeReports");
-            return criteriaBuilder.equal(studentCourseJoin.get("course").get("id"), id);
+            return criteriaBuilder.equal(studentCourseJoin.get(COURSE_LITERAL).get("id"), id);
         };
         Page<Student> students = studentRepository.findAll(studentSpec, pageable);
         return students.map(this::convertToStudentDTO);
@@ -95,7 +98,7 @@ public class InstructorServicelmpl implements InstructorService {
     public List<Student> getStudentByCourses(Long id) {
         Specification<Student> studentSpec = (root, query, criteriaBuilder) -> {
             Join<Student, StudentCourseGradeReport> studentCourseJoin = root.join("studentCourses");
-            return criteriaBuilder.equal(studentCourseJoin.get("course").get("id"), id);
+            return criteriaBuilder.equal(studentCourseJoin.get(COURSE_LITERAL).get("id"), id);
         };
         return studentRepository.findAll(studentSpec);
     }
@@ -122,7 +125,7 @@ public class InstructorServicelmpl implements InstructorService {
     }
 
     @Override
-    public GradeReport updateGradeReport(GradeReport gradeReport) {
+    public GradeReportResponse updateGradeReport(GradeReport gradeReport) {
         if (gradeReport == null || gradeReport.getId() == null) {
             throw new IllegalArgumentException("GradeReport with ID must be provided");
         }
@@ -134,7 +137,8 @@ public class InstructorServicelmpl implements InstructorService {
         existingGradeReport.get().setPointEndCourse(gradeReport.getPointEndCourse());
         existingGradeReport.get().setTotalMark(gradeReport.getTotalMark());
         existingGradeReport.get().setGrades(gradeReport.getGrades());
-        return gradeReportRepository.save(existingGradeReport.get());
+        GradeReport updatedGradeReport = gradeReportRepository.save(existingGradeReport.get());
+        return convertToGradeDTO(updatedGradeReport);
     }
 
     @Override
@@ -176,9 +180,12 @@ public class InstructorServicelmpl implements InstructorService {
     }
 
     @Override
-    public InstructorResponse getInstructorByCode(String code) {
-        Instructor instructor = instructorsRepository.findByCode(code);
-        return convertToInstructorDTO(instructor);
+    public InstructorResponse getInstructorById(Long id) {
+        Instructor instructor = instructorsRepository.findById(id).orElse(null);
+        if (instructor != null) {
+            return convertToInstructorDTO(instructor);
+        }
+        return null;
     }
 
     private InstructorResponse convertToInstructorDTO(Instructor instructor) {
@@ -199,4 +206,44 @@ public class InstructorServicelmpl implements InstructorService {
         Page<Instructor> instructors = instructorsRepository.findAll(instrucTorSpecification, pageable);
         return instructors.map(this::convertToInstructorDTO);
     }
+
+    @Override
+    public InstructorResponse instructorUpdate(Instructor instructor) {
+        if (instructor == null || instructor.getId() == null) {
+            throw new IllegalArgumentException("GradeReport with ID must be provided");
+        }
+        Optional<Instructor> existinstructor = instructorsRepository.findById(instructor.getId());
+        if (existinstructor.isEmpty()) {
+            throw new EntityNotFoundException("GradeReport with ID " + instructor.getId() + " not found");
+        }
+        existinstructor.get().setCode(instructor.getCode());
+        existinstructor.get().setDob(instructor.getDob());
+        existinstructor.get().setName(instructor.getName());
+        existinstructor.get().setGender(instructor.getGender());
+        existinstructor.get().setEmail(instructor.getEmail());
+        existinstructor.get().setAddress(instructor.getAddress());
+        existinstructor.get().setPhone(instructor.getPhone());
+        Instructor updateInstructor = instructorsRepository.save(existinstructor.get());
+        return convertToInstructorDTO(updateInstructor);
+
+    }
+
+
+    @Override
+    public String removeCourse(Long instructorId, Long courseId) {
+        Specification<CourseInstructor> spec = Specification.where(
+                (root, query, criteriaBuilder) -> {
+                    Path<Long> instructorIdPath = root.get("instructor").get("id");
+                    Path<Long> courseIdPath = root.get(COURSE_LITERAL).get("id");
+                    return criteriaBuilder.and(
+                            criteriaBuilder.equal(instructorIdPath, instructorId),
+                            criteriaBuilder.equal(courseIdPath, courseId)
+                    );
+                }
+        );
+
+        long deletedCount = courseInstructorsRepository.delete(spec);
+        return deletedCount > 0 ? "Delete Successfully" : "Delete Fail";
+    }
+
 }

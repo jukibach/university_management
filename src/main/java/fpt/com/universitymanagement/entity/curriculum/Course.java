@@ -69,5 +69,5 @@ public class Course extends BaseEntity {
     private List<Session> sessions;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<StudentCourseGradeReport> studentCoursGradeReports;
+    private List<StudentCourseGradeReport> studentCourseGradeReports;
 }

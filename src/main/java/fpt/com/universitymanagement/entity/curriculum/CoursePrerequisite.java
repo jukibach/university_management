@@ -20,11 +20,11 @@ public class CoursePrerequisite {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "course_id",nullable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
     @ManyToOne
-    @JoinColumn(name = "prerquisite_id",nullable = false)
+    @JoinColumn(name = "prerequisite_id", nullable = false)
     private Prerequisite prerequisite;
 
 }

@@ -4,15 +4,18 @@ import fpt.com.universitymanagement.dto.CoursesResponse;
 import fpt.com.universitymanagement.dto.GradeReportResponse;
 import fpt.com.universitymanagement.dto.InstructorResponse;
 import fpt.com.universitymanagement.dto.StudentResponse;
+import fpt.com.universitymanagement.entity.faculty.Instructor;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
 import fpt.com.universitymanagement.service.ApiResponseOperation;
 import fpt.com.universitymanagement.service.InstructorService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,9 +64,9 @@ public class InstructorController {
     @PutMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponseOperation
-    public ResponseEntity<GradeReport> updateGradeReport(@RequestBody GradeReport gradeReport) {
-        GradeReport gradeReports = instructorService.updateGradeReport(gradeReport);
-        return ResponseEntity.ok(gradeReports);
+    public ResponseEntity<GradeReportResponse> updateGradeReport(@RequestBody GradeReport gradeReport) {
+        return ResponseEntity.ok(instructorService.updateGradeReport(gradeReport));
+
     }
 
     @GetMapping("/excel")
@@ -80,10 +83,41 @@ public class InstructorController {
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(new ByteArrayInputStream(out.toByteArray())));
     }
 
-    @GetMapping("/instructors")
+    @GetMapping("/search-instructors")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponseOperation
     public ResponseEntity<Page<InstructorResponse>> searchInstructor(Pageable pageable, String searchInput) {
         return ResponseEntity.ok(instructorService.searchInstructor(pageable, searchInput));
+    }
+
+    @GetMapping("/instructors")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponseOperation
+    public ResponseEntity<InstructorResponse> instructorById(@RequestParam Long id) {
+        return ResponseEntity.ok(instructorService.getInstructorById(id));
+    }
+
+    @PutMapping("/instructors")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponseOperation
+    public ResponseEntity<InstructorResponse> updateInstructor(@RequestBody Instructor instructor) {
+        return ResponseEntity.ok(instructorService.instructorUpdate(instructor));
+    }
+
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponseOperation
+    public ResponseEntity<String> deleteCourse(@RequestParam Long instructorId, @RequestParam Long courseId) {
+        try {
+            String result;
+            result = instructorService.removeCourse(instructorId, courseId);
+            return ResponseEntity.ok(result);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import fpt.com.universitymanagement.dto.CoursesResponse;
 import fpt.com.universitymanagement.dto.GradeReportResponse;
 import fpt.com.universitymanagement.dto.InstructorResponse;
 import fpt.com.universitymanagement.dto.StudentResponse;
+import fpt.com.universitymanagement.entity.faculty.Instructor;
 import fpt.com.universitymanagement.entity.student.GradeReport;
 import fpt.com.universitymanagement.entity.student.Student;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ public interface InstructorService {
 
     Page<CoursesResponse> getCoursesByFindByCode(String code, Pageable pageable);
 
-    InstructorResponse getInstructorByCode(String code);
+    InstructorResponse getInstructorById(Long id);
 
     Page<StudentResponse> getStudentByCourses(Long id, Pageable pageable);
 
@@ -24,9 +25,13 @@ public interface InstructorService {
 
     List<GradeReportResponse> getGradeReportByStudentId(Long id);
 
-    GradeReport updateGradeReport(GradeReport gradeReport);
+    GradeReportResponse updateGradeReport(GradeReport gradeReport);
 
     void exportStudentsToExcel(List<Student> students, OutputStream outputStream);
 
     Page<InstructorResponse> searchInstructor(Pageable pageable, String searchInput);
+
+    InstructorResponse instructorUpdate(Instructor instructor);
+
+    String removeCourse(Long instructorId, Long courseId);
 }

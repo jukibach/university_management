@@ -14,7 +14,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -55,7 +54,7 @@ public class Instructor extends BaseEntity {
     @Column(nullable = false)
     private String address;
 
-    @OneToMany(mappedBy = "instructor",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<CourseInstructor> courseInstructors;
 
     @OneToOne(cascade = CascadeType.ALL)
