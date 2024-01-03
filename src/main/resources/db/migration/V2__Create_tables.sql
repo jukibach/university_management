@@ -421,7 +421,12 @@ INSERT INTO curriculum.courses (code, name, credits, description, start_day, sta
 VALUES
  ('COURSE001', 'Course 1', 3, 'Course 1 description', '2023-01-01', '2023-01-01 09:00:00', CURRENT_TIMESTAMP, 'Admin'),
  ('COURSE002', 'Course 2', 4, 'Course 2 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
- ('COURSE003', 'Course 3', 2, 'Course 3 description', '2023-03-01', '2023-03-01 18:00:00', CURRENT_TIMESTAMP, 'Admin');
+ ('COURSE003', 'Course 3', 3, 'Course 3 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE004', 'Course 4', 2, 'Course 4 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE005', 'Course 5', 4, 'Course 5 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE006', 'Course 6', 3, 'Course 6 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE007', 'Course 7', 4, 'Course 7 description', '2023-02-01', '2023-01-01 14:00:00', CURRENT_TIMESTAMP, 'Admin'),
+ ('COURSE008', 'Course 8', 2, 'Course 8 description', '2023-03-01', '2023-03-01 18:00:00', CURRENT_TIMESTAMP, 'Admin');
 
   INSERT INTO student.students (code, name, dob, email, phone, gender, address, academic_year, account_id, created_at, created_by)
   VALUES ('S001', 'Nguyen Van A', '2000-01-01', 'nguyenvana@example.com', '123456789', 'Male', '123 ABC Street', '2023', 19, CURRENT_TIMESTAMP, 'Admin'),
@@ -469,7 +474,13 @@ VALUES
          (2, 17),
          (3, 18),
          (3, 19),
-         (3, 20);
+         (3, 20),
+         (4, 1),
+         (5, 2),
+         (6, 3),
+         (7, 4),
+         (8, 5),
+         (1, 6);
 
 
   INSERT INTO faculty.course_instructor (course_id, instructor_id)
@@ -478,6 +489,7 @@ VALUES
   (2, 2),
   (3, 3),
   (2, 1);
+
 
 
   INSERT INTO student.grade_report (point_process, point_end_course, total_mark, grades, instructor_id, student_course_grader_id, created_at, updated_at, created_by, updated_by)
