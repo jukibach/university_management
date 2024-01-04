@@ -5,6 +5,7 @@ import fpt.com.universitymanagement.dto.StudentResponse;
 import fpt.com.universitymanagement.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,11 +23,13 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping("/students")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponse> getStudentById(@RequestParam Long id) {
         return ResponseEntity.ok(studentService.getStudentById(id));
     }
 
     @GetMapping("/course")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CoursesResponse>> getCourseByStudent(@RequestParam Long id) {
         return ResponseEntity.ok(studentService.getCourseByStudent(id));
     }

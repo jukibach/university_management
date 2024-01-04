@@ -160,15 +160,15 @@ public class InstructorServicelmpl implements InstructorService {
             int rowNum = 1;
             for (Student studentResponse : students) {
                 Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(studentResponse.getId());
-                row.createCell(1).setCellValue(studentResponse.getCode());
-                row.createCell(2).setCellValue(studentResponse.getName());
-                row.createCell(3).setCellValue(studentResponse.getGender());
-                row.createCell(4).setCellValue(studentResponse.getDob());
-                row.createCell(5).setCellValue(studentResponse.getEmail());
-                row.createCell(6).setCellValue(studentResponse.getPhone());
-                row.createCell(7).setCellValue(studentResponse.getAddress());
-                row.createCell(8).setCellValue(studentResponse.getAcademicYear());
+                row.createCell(1).setCellValue(studentResponse.getId());
+                row.createCell(2).setCellValue(studentResponse.getCode());
+                row.createCell(3).setCellValue(studentResponse.getName());
+                row.createCell(4).setCellValue(studentResponse.getGender());
+                row.createCell(5).setCellValue(studentResponse.getDob());
+                row.createCell(6).setCellValue(studentResponse.getEmail());
+                row.createCell(7).setCellValue(studentResponse.getPhone());
+                row.createCell(8).setCellValue(studentResponse.getAddress());
+                row.createCell(9).setCellValue(studentResponse.getAcademicYear());
 
             }
 
@@ -227,7 +227,6 @@ public class InstructorServicelmpl implements InstructorService {
         return convertToInstructorDTO(updateInstructor);
 
     }
-
 
     @Override
     public String removeCourse(Long instructorId, Long courseId) {

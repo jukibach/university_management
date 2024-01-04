@@ -70,4 +70,14 @@ public class Course extends BaseEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<StudentCourseGradeReport> studentCourseGradeReports;
+
+    public Course(Long id, String code, String name, String description, int credits, LocalDate startDay, LocalDate startTime) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.credits = credits;
+        this.startDay = startDay;
+        this.startTime = startTime;
+    }
 }
