@@ -1,9 +1,15 @@
 package fpt.com.universitymanagement.repository;
 
-import fpt.com.universitymanagement.entity.Account;
+import fpt.com.universitymanagement.entity.account.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.util.Optional;
 
-public interface AccountRepository extends JpaRepository<Account, UUID> {
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpecificationExecutor<Account> {
+    Optional<Account> findByUserName(String userName);
+
+    Optional<Account> findByEmail(String email);
 }

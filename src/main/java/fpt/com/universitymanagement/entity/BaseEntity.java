@@ -4,26 +4,32 @@ package fpt.com.universitymanagement.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @MappedSuperclass
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDate createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private Timestamp createdAt;
     
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDate updatedAt;
-    
-    @Column(name = "created_by", updatable = false)
+    @CreatedBy
+    @Column(name = "created_by", updatable = false, nullable = false)
     private String createdBy;
     
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
+    
+    @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
 }
