@@ -6,7 +6,19 @@ import fpt.com.universitymanagement.entity.curriculum.Exam;
 import fpt.com.universitymanagement.entity.curriculum.Session;
 import fpt.com.universitymanagement.entity.salary.Salary;
 import fpt.com.universitymanagement.entity.student.GradeReport;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +26,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -28,54 +39,54 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = "phone"),
         })
 public class Instructor extends BaseEntity {
-
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
-
+    private Long id;
+    
     @Column(nullable = false)
     private String code;
-
+    
     @Column(nullable = false)
     private String name;
-
+    
     @Column(nullable = false)
     private String gender;
-
+    
     @Column(nullable = false)
     private LocalDate dob;
-
+    
     @Column(nullable = false)
     private String email;
-
+    
     @Column(nullable = false)
     private String phone;
-
+    
     @Column(nullable = false)
     private String address;
-
-    @OneToMany(mappedBy = "instructor",cascade = CascadeType.ALL)
+    
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<CourseInstructor> courseInstructors;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
-
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "salary_id")
     private Salary salary;
-
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
-
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Session> sessions;
-
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exam> exams;
-
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GradeReport> gradeReports;
 }
