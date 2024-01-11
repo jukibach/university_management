@@ -8,29 +8,26 @@ CREATE SCHEMA IF NOT EXISTS department;
 
 create table if not exists building.buildings
 (
-    id          SERIAL PRIMARY KEY,
-    code        varchar(15)  not null UNIQUE,
-    name        varchar(255) not null UNIQUE,
-    details     TEXT,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    id         SERIAL PRIMARY KEY,
+    code       varchar(15)  not null UNIQUE,
+    name       varchar(255) not null UNIQUE,
+    details    TEXT,
+    created_at timestamp(6) not null,
+    created_by varchar(255) not null,
+    updated_at timestamp(6),
+    updated_by varchar(255)
 );
-
-
 
 create table if not exists curriculum.categories
 (
     id           SERIAL PRIMARY KEY,
     name         varchar(255) not null UNIQUE,
     subject_type varchar(255),
-    create_time  timestamp(6) not null,
-    create_by    varchar(255) not null,
-    update_time  timestamp(6),
-    update_by    varchar(255)
+    created_at   timestamp(6) not null,
+    created_by   varchar(255) not null,
+    updated_at   timestamp(6),
+    updated_by   varchar(255)
 );
-
 
 create table if not exists curriculum.courses
 (
@@ -44,10 +41,10 @@ create table if not exists curriculum.courses
     category_id bigint       not null
         constraint fkkyes7515s3ypoovxrput029bh
             references curriculum.categories,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at  timestamp(6) not null,
+    created_by  varchar(255) not null,
+    updated_at  timestamp(6),
+    updated_by  varchar(255)
 );
 
 create table if not exists curriculum.curriculums
@@ -56,10 +53,10 @@ create table if not exists curriculum.curriculums
     name          varchar(255) not null,
     year          integer      not null,
     total_credits smallint     not null,
-    create_time   timestamp(6) not null,
-    update_time   timestamp(6),
-    create_by     varchar(255) not null,
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    updated_at    timestamp(6),
+    created_by    varchar(255) not null,
+    updated_by    varchar(255)
 );
 
 create table if not exists curriculum.curriculum_course
@@ -78,12 +75,11 @@ create table if not exists department.departments
     id          SERIAL PRIMARY KEY,
     name        varchar(255) not null,
     description varchar(255) not null,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at  timestamp(6) not null,
+    created_by  varchar(255) not null,
+    updated_at  timestamp(6),
+    updated_by  varchar(255)
 );
-
 
 create table if not exists faculty.faculties
 (
@@ -95,26 +91,25 @@ create table if not exists faculty.faculties
         unique
         constraint fk5h52wi47rp1r5d09npkvhbv3e
             references curriculum.curriculums,
-    create_time   timestamp(6) not null,
-    update_time   timestamp(6),
-    create_by     varchar(255) not null,
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    updated_at    timestamp(6),
+    created_by    varchar(255) not null,
+    updated_by    varchar(255)
 );
 
 create table if not exists faculty.classes
 (
-    id          SERIAL PRIMARY KEY,
-    code        varchar(255) not null UNIQUE,
-    name        varchar(255) not null,
-    faculty_id  bigint
+    id         SERIAL PRIMARY KEY,
+    code       varchar(255) not null UNIQUE,
+    name       varchar(255) not null,
+    faculty_id bigint
         constraint fkpoymrbf5df7x6k2ylbxfbgaqu
             references faculty.faculties,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at timestamp(6) not null,
+    created_by varchar(255) not null,
+    updated_at timestamp(6),
+    updated_by varchar(255)
 );
-
 
 create table if not exists student.guardians
 (
@@ -122,10 +117,10 @@ create table if not exists student.guardians
     name          varchar(255) not null,
     phone         varchar(255) not null,
     relationships varchar(255) not null,
-    create_time   timestamp(6) not null,
-    update_time   timestamp(6),
-    create_by     varchar(255) not null,
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    updated_at    timestamp(6),
+    created_by    varchar(255) not null,
+    updated_by    varchar(255)
 );
 
 create table if not exists curriculum.prerequisites
@@ -133,11 +128,12 @@ create table if not exists curriculum.prerequisites
     id          SERIAL PRIMARY KEY,
     name        varchar(255),
     description varchar(255),
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at  timestamp(6) not null,
+    created_by  varchar(255) not null,
+    updated_at  timestamp(6),
+    updated_by  varchar(255)
 );
+
 create table if not exists curriculum.course_prerequisite
 (
     id              SERIAL PRIMARY KEY,
@@ -161,55 +157,54 @@ create table if not exists building.rooms
     department_id bigint
         constraint fkfbxs68qt7hfp6rkqan2eqbtyq
             references department.departments,
-    create_time   timestamp(6) not null,
-    create_by     varchar(255) not null,
-    update_time   timestamp(6),
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    created_by    varchar(255) not null,
+    updated_at    timestamp(6),
+    updated_by    varchar(255)
 );
-
 
 create table if not exists salary.salary
 (
     id          SERIAL PRIMARY KEY,
     base_salary integer      not null,
     pay_date    date         not null,
-    create_time timestamp(6) not null,
-    update_time timestamp(6),
-    create_by   varchar(255) not null,
-    update_by   varchar(255)
+    created_at  timestamp(6) not null,
+    updated_at  timestamp(6),
+    created_by  varchar(255) not null,
+    updated_by  varchar(255)
 );
 
 create table if not exists faculty.instructors
 (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    code        varchar(20) not null UNIQUE,
-    name        varchar(50) not null,
-    dob         date         not null,
-    email       varchar(100) not null UNIQUE,
-    phone       varchar(11) not null UNIQUE,
-    gender      varchar(10) not null,
-    address     varchar(255) not null,
-    account_id  BIGSERIAL,
-    CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES account.accounts(id),
-    faculty_id  bigint
+    id         BIGSERIAL PRIMARY KEY,
+    code       varchar(20)  not null UNIQUE,
+    name       varchar(50)  not null,
+    dob        date         not null,
+    email      varchar(100) not null UNIQUE,
+    phone      varchar(11)  not null UNIQUE,
+    gender     varchar(10)  not null,
+    address    varchar(255) not null,
+    account_id BIGSERIAL,
+    CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES account.accounts (id),
+    faculty_id bigint
         constraint fki8vktt5q456toh0o8apn8o8rf
             references faculty.faculties,
-    salary_id   bigint
+    salary_id  bigint
         constraint fkbfp539ioos6am107yk50dcugg
             references salary.salary,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at timestamp(6) not null,
+    created_by varchar(255) not null,
+    updated_at timestamp(6),
+    updated_by varchar(255)
 );
 
 create table if not exists faculty.course_instructor
 (
     id            SERIAL PRIMARY KEY,
-    course_id     bigint not null
+    course_id     bigint    not null
         constraint fkeqej22fgwa29i98ucd9x9ycie
             references curriculum.courses,
-    instructor_id UUID   not null
+    instructor_id BIGSERIAL not null
         constraint fkltori8qni3ivrlovca4gd9yw3
             references faculty.instructors
 );
@@ -234,10 +229,10 @@ create table if not exists department.managers
     salary_id     bigint
         constraint fkm1sveer9f5qktxvx464tl7e5x
             references salary.salary,
-    create_time   timestamp(6) not null,
-    create_by     varchar(255) not null,
-    update_time   timestamp(6),
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    created_by    varchar(255) not null,
+    updated_at    timestamp(6),
+    updated_by    varchar(255)
 );
 
 create table if not exists curriculum.session
@@ -249,16 +244,16 @@ create table if not exists curriculum.session
     course_id     bigint       not null
         constraint fk5ibwg70x5r9hls6pqe5yg2vvb
             references curriculum.courses,
-    instructor_id UUID         not null
+    instructor_id BIGSERIAL    not null
         constraint fk8l1v75brk9afixg1li5ymt7nj
             references faculty.instructors,
     room_id       bigint       not null
         constraint fkoyfccms1psubki0cm7c92msrp
             references building.rooms,
-    create_time   timestamp(6) not null,
-    create_by     varchar(255) not null,
-    update_time   timestamp(6),
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    created_by    varchar(255) not null,
+    updated_at    timestamp(6),
+    updated_by    varchar(255)
 );
 
 create table if not exists curriculum.year
@@ -269,17 +264,17 @@ create table if not exists curriculum.year
 
 create table if not exists curriculum.semester
 (
-    id          SERIAL PRIMARY KEY,
-    name        varchar(255),
-    start_date  date,
-    end_date    date,
-    year_id     bigint       not null
+    id         SERIAL PRIMARY KEY,
+    name       varchar(255),
+    start_date date,
+    end_date   date,
+    year_id    bigint       not null
         constraint fk7w0wxawgsexa0ifu262tob1ep
             references curriculum.year,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at timestamp(6) not null,
+    created_by varchar(255) not null,
+    updated_at timestamp(6),
+    updated_by varchar(255)
 );
 
 create table if not exists curriculum.course_semester
@@ -302,16 +297,16 @@ create table if not exists curriculum.exams
     course_id       bigint       not null
         constraint fkiub3ue9cklcyyra24v9ns656n
             references curriculum.courses,
-    instructor_id   UUID         not null
+    instructor_id   BIGSERIAL    not null
         constraint fk23nklkf992jpo1hxqmpa16t77
             references faculty.instructors,
     semester_id     bigint       not null
         constraint fkp8njc4xlmts6sdw7p3ra2shkf
             references curriculum.semester,
-    create_time     timestamp(6) not null,
-    create_by       varchar(255) not null,
-    update_time     timestamp(6),
-    update_by       varchar(255)
+    created_at      timestamp(6) not null,
+    created_by      varchar(255) not null,
+    updated_at      timestamp(6),
+    updated_by      varchar(255)
 );
 
 create table if not exists timetable.timetable
@@ -321,10 +316,10 @@ create table if not exists timetable.timetable
     semester_id bigint       not null
         constraint fkmkvrn4nnpjhpjxgqvd4dhfdbl
             references curriculum.semester,
-    create_time timestamp(6) not null,
-    create_by   varchar(255) not null,
-    update_time timestamp(6),
-    update_by   varchar(255)
+    created_at  timestamp(6) not null,
+    created_by  varchar(255) not null,
+    updated_at  timestamp(6),
+    updated_by  varchar(255)
 );
 
 create table if not exists student.students
@@ -351,10 +346,10 @@ create table if not exists student.students
     timetable_id  bigint       not null
         constraint fk7yw3t9woq5rcao21u1a625l8t
             references timetable.timetable,
-    create_time   timestamp(6) not null,
-    create_by     varchar(255) not null,
-    update_time   timestamp(6),
-    update_by     varchar(255)
+    created_at    timestamp(6) not null,
+    created_by    varchar(255) not null,
+    updated_at    timestamp(6),
+    updated_by    varchar(255)
 );
 
 create table if not exists student.grade_report
@@ -364,16 +359,16 @@ create table if not exists student.grade_report
     point_end_course double precision not null,
     total_mark       double precision not null,
     grades           varchar(255),
-    instructor_id    UUID             not null
+    instructor_id    BIGSERIAL        not null
         constraint fkqkyw5ljmjiemlr82rcy5iictj
             references faculty.instructors,
     student_id       UUID             not null
         constraint fknleqou2lxe9cqllvw26k9r709
             references student.students,
-    create_time      timestamp(6)     not null,
-    create_by        varchar(255)     not null,
-    update_time      timestamp(6),
-    update_by        varchar(255)
+    created_at       timestamp(6)     not null,
+    created_by       varchar(255)     not null,
+    updated_at       timestamp(6),
+    updated_by       varchar(255)
 );
 create table if not exists student.student_course
 (
@@ -381,7 +376,7 @@ create table if not exists student.student_course
     course_id  bigint not null
         constraint fkejrkh4gv8iqgmspsanaji90ws
             references curriculum.courses,
-    student_id UUID not null
+    student_id UUID   not null
         constraint fkq7yw2wg9wlt2cnj480hcdn6dq
             references student.students
 );
