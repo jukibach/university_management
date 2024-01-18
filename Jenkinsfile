@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage('Pull code') {
-            steps {
-                // Pull code from source control repository
-                git branch: 'main', url: 'https://github.com/LeHuuVu99/university_management.git'
-            }
-        }
+     stage('Pull code') {
+    steps {
+        git branch: "${params.BRANCH}", url: 'https://github.com/LeHuuVu99/university_management.git'
+    }
+}
         stage('Compile and Clean') {
             steps {
                 // Run Maven on any agent.
