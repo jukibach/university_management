@@ -17,7 +17,10 @@ pipeline {
                         sh "git clone ${gitUrl} ."
                     } else {
                         // Update repository if it already exists in the workspace
-                        sh "git pull"
+                        dir(workspaceDir) {
+                            sh "git checkout ${params.branch}" // Replace 'master' with your desired branch name
+                            sh "git pull origin ${params.branch}" // Replace 'master' with your desired branch name
+                        }
                     }
                 }
             }
@@ -34,12 +37,6 @@ pipeline {
                 sh "mvn package"
             }
         }
-        
-        // stage('Push code') {
-        //     steps {
-        //         sh "git push origin ${params.branch}"
-        //     }
-        // }
         
         stage('Archiving') {
             steps {
