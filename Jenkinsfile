@@ -5,6 +5,10 @@ pipeline {
         maven "maven"
     }
     
+    parameters {
+        string(name: 'branch', defaultValue: 'master', description: 'The branch to clone or update')
+    }
+    
     stages {
         stage('Clone or Update code') {
             steps {
@@ -18,8 +22,8 @@ pipeline {
                     } else {
                         // Update repository if it already exists in the workspace
                         dir(workspaceDir) {
-                            sh "git checkout ${params.branch}" // Replace 'master' with your desired branch name
-                            sh "git pull origin ${params.branch}" // Replace 'master' with your desired branch name
+                            sh "git checkout ${params.branch}"
+                            sh "git pull origin ${params.branch}"
                         }
                     }
                 }
