@@ -5,9 +5,9 @@ pipeline {
         maven "maven"
     }
     
-    parameters {
-        string(name: 'branch', defaultValue: 'master', description: 'The branch to clone or update')
-    }
+    // parameters {
+    //     string(name: 'branch', defaultValue: 'master', description: 'The branch to clone or update')
+    // }
     
     stages {
         stage('Clone or Update code') {
