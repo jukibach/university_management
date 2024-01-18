@@ -12,9 +12,7 @@ pipeline {
   stages {
     stage('Clone or Update code') {
       steps {
-        sh "git config --global user.email 'lehuuvu110799@gmail.com'"
-        sh "git config --global user.name 'LeHuuVu99'"
-        sh "git config pull.rebase false"
+       
         sh "git pull origin ${params.branch}"
       }
     }
