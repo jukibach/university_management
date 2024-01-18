@@ -1,9 +1,11 @@
 pipeline {
     agent any
- tools {
+    
+    tools {
         maven "maven"
     }
-     stages {
+    
+    stages {
         stage('Clone or Update code') {
             steps {
                 script {
