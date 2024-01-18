@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Pull code') {
             steps {
-                sh "git pull origin ${params.BRANCH}"
+                sh "git pull origin ${params.branch}"
             }
         }
         
@@ -22,7 +22,7 @@ pipeline {
         
         stage('Push code') {
             steps {
-                sh "git push origin ${params.BRANCH}"
+                sh "git push origin ${params.branch}"
             }
         }
         
