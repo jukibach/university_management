@@ -17,7 +17,7 @@ pipeline {
                         sh "git clone ${gitUrl} ."
                     } else {
                         // Update repository if it already exists in the workspace
-                        sh "git pull"
+                        sh "git clone origin ${params.branch}"
                     }
                 }
             }
