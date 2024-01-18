@@ -12,6 +12,7 @@ pipeline {
   stages {
     stage('Clone or Update code') {
       steps {
+         sh "git config pull.rebase false"
         sh "git pull origin ${params.branch}"
       }
     }
