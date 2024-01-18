@@ -11,7 +11,13 @@ pipeline {
                 sh 'mvn clean package -Dmaven.test.failure.ignore=true'
             }
         }
-        
+            stage('Install Docker') {
+      steps {
+        sh 'apt-get update'
+        sh 'apt-get install docker-ce'
+        sh 'systemctl start docker'
+      }
+    }
         stage('Build PostgreSQL image') {
             steps {
                 sh 'docker build -t university-postgres:latest -f Dockerfile.postgres .'
