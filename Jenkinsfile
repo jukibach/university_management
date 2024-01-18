@@ -4,9 +4,9 @@ pipeline {
         maven "maven"
     }
     stages {
-        stage('Pull code') {
+        stage('clone code') {
             steps {
-                sh "git pull origin ${params.branch}"
+                sh "git clone origin ${params.branch}"
             }
         }
         
