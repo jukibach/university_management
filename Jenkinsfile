@@ -4,7 +4,7 @@ pipeline {
     stages {
      stage('Pull code') {
     steps {
-        git branch: "${params.BRANCH}", url: 'https://github.com/LeHuuVu99/university_management.git'
+         sh 'git push origin ${params.BRANCH}'
     }
 }
         stage('Compile and Clean') {
