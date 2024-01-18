@@ -13,9 +13,9 @@ pipeline {
         }
             stage('Install Docker') {
       steps {
-        sh 'apt-get update'
-        sh 'apt-get install docker-ce'
-        sh 'systemctl start docker'
+        sh 'sudo apt-get update'
+        sh 'sudo apt-get install docker-ce'
+        sh 'sudo systemctl start docker'
       }
     }
         stage('Build PostgreSQL image') {
