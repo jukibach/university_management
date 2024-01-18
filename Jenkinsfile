@@ -16,11 +16,11 @@ pipeline {
             }
         }
         
-        stage('Deploy') {
-            steps {
-                sh "mvn package"
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         sh "mvn package"
+        //     }
+        // }
         
         stage('Push code') {
             steps {
