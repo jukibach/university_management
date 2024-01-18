@@ -18,12 +18,12 @@ pipeline {
                 sh "mvn package"
             }
         }
-        stage('Push code') {
-            steps {
-                // Push code to source control repository
-                gitPush(branch: 'main')
-            }
-        }
+        // stage('Push code') {
+        //     steps {
+        //         // Push code to source control repository
+        //         gitPush(branch: 'main')
+        //     }
+        // }
         stage('Archiving') {
             steps {
                 archiveArtifacts '**/target/*.jar'
