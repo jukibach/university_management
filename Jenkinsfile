@@ -16,17 +16,17 @@ pipeline {
             }
         }
         
-        // stage('Deploy') {
-        //     steps {
-        //         sh "mvn package"
-        //     }
-        // }
-        
-        stage('Push code') {
+        stage('Deploy') {
             steps {
-                sh "git push origin ${params.branch}"
+                sh "mvn package"
             }
         }
+        
+        // stage('Push code') {
+        //     steps {
+        //         sh "git push origin ${params.branch}"
+        //     }
+        // }
         
         stage('Archiving') {
             steps {
