@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage('Clone or Update code') {
       steps {
-        sh "git pull ${params.branch}"
+        sh "git pull origin ${params.branch}"
       }
     }
 
