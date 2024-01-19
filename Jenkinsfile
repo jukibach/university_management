@@ -1,8 +1,8 @@
 pipeline {
     agent any
- // tools { 
- //        maven 'maven' 
- //    }
+    too {
+        maven 'maven'
+    }
     stages {
         stage('Build with Maven') {
             steps {
@@ -18,23 +18,18 @@ pipeline {
         sh 'sudo systemctl start docker'
       }
     }
-        stage('Build PostgreSQL image') {
-            steps {
-                sh 'docker build -t university-postgres:latest -f Dockerfile.postgres .'
-            }
-        }
-        
         stage('Build Spring Boot image') {
             steps {
                 sh 'docker build -t university-springboot:latest -f Dockerfile.springboot .'
-                sh 'docker push anhanja123/springboot'
+                sh 'docker push anhanja123/university-springboot'
+            
             }
         }
-        
+ 
         stage('Deploy PostgreSQL to DEV') {
             steps {
                 echo 'Deploying and cleaning'
-                sh 'docker container stop my-postgres || echo "this container does not exist" '
+                sh 'docker container stop university-postgres || echo "this container does not exist" '
                 sh 'echo y | docker container prune '
                 sh 'docker volume rm university-postgres-data || echo "no volume"'
 
