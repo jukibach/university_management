@@ -27,6 +27,7 @@ pipeline {
         stage('Build Spring Boot image') {
             steps {
                 sh 'docker build -t university-springboot:latest -f Dockerfile.springboot .'
+                sh 'docker push anhanja123/springboot'
             }
         }
         
