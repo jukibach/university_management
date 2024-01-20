@@ -39,18 +39,16 @@ pipeline {
                 sh 'echo y | docker container prune '
                 sh 'docker volume rm jukibach-postgres-data || echo "no volume"'
 
-                sh "docker run --name jukibach-postgres --network dev -p 5432:5432 -v jukibach-postgres-data:/var/lib/postgres -e POSTGRES_PASSWORD=${POSTGRESQL_ROOT_LOGIN_PSW} -e POSTGRES_DATABASE=university_management -d postgres "
+                sh "docker run --rm --name jukibach-postgres --network dev -p 5432:5432 -v jukibach-postgres-data:/var/lib/postgres -e POSTGRES_PASSWORD=${POSTGRESQL_ROOT_LOGIN_PSW} -e POSTGRES_DATABASE=university_management -d postgres "
                 sh 'docker ps -a'
             }
         }
 
 		stage('Create Database') {
             steps {
-                script {
-					echo 'Create database'
-                    // Create a new database
-                    sh "docker exec jukibach-postgres psql -U postgres -c 'CREATE DATABASE university_management;'"
-                }
+                echo 'Create database'
+                // Create a new database
+                sh "docker exec jukibach-postgres psql -U postgres -c 'CREATE DATABASE university_management;'"
             }
         }
 
