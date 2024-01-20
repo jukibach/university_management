@@ -16,6 +16,7 @@ pipeline {
                 sh 'mvn --version'
                 sh 'java -version'
                 sh 'mvn clean package -Dmaven.test.failure.ignore=true'
+                sh 'sudo chmod 666 /var/run/docker.sock'
             }
         }
 
