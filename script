@@ -1,0 +1,3 @@
+CREATE USER 'kayke' IDENTIFIED BY 'password123_DONG';
+GRANT ALL PRIVILEGES ON university_management.* TO 'kayke';
+FLUSH PRIVILEGES;
