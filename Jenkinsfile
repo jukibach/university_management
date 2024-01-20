@@ -41,6 +41,7 @@ pipeline {
 
                 sh "docker run --rm --name jukibach-postgres --network dev -p 5432:5432 -v jukibach-postgres-data:/var/lib/postgres -e POSTGRES_PASSWORD=${POSTGRESQL_ROOT_LOGIN_PSW} -e POSTGRES_DATABASE=university_management -d postgres "
                 sh 'docker ps -a'
+                sh 'sleep 15'
             }
         }
 
