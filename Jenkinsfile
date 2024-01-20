@@ -4,6 +4,7 @@ pipeline {
 
     tools {
         maven 'my-maven'
+        docker 'mydocker'
     }
     environment {
         POSTGRESQL_ROOT_LOGIN = credentials('postgres')
@@ -18,7 +19,7 @@ pipeline {
             }
         }
 
-        stage('Packaging/Pushing imagae') {
+        stage('Packaging/Pushing image') {
 
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
