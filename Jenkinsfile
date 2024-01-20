@@ -3,8 +3,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'my-maven',
-        docker 'mydocker'
+        maven 'my-maven'
     }
     environment {
         POSTGRESQL_ROOT_LOGIN = credentials('postgres')
