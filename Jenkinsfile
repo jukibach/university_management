@@ -41,7 +41,7 @@ pipeline {
 
                 sh "docker run --name jukibach-postgres --network dev -v jukibach-postgres-data:/var/lib/postgres -e POSTGRES_PASSWORD=${POSTGRESQL_ROOT_LOGIN_PSW} -e POSTGRES_DATABASE=university_management -d postgres "
                 sh 'docker ps -a'
-                sh "docker exec -i jukibach-postgres postgres --user=postgres --password=${POSTGRESQL_ROOT_LOGIN_PSW} < script"
+                sh "docker exec -i jukibach-postgres postgres --user=root --password=${POSTGRESQL_ROOT_LOGIN_PSW} < script"
             }
         }
 
@@ -52,7 +52,6 @@ pipeline {
                 sh 'docker container stop jukibach-springboot || echo "this container does not exist" '
                 sh 'docker network create dev || echo "this network exists"'
                 sh 'echo y | docker container prune '
-
                 sh 'docker container run -d --rm --name jukibach-springboot -p 8081:8080 --network dev jukibach/springboot'
             }
         }
