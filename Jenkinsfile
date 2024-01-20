@@ -14,6 +14,7 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'java -version'
+                sh 'docker --version'
                 sh 'mvn clean package -Dmaven.test.failure.ignore=true'
             }
         }
