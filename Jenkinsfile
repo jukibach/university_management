@@ -39,8 +39,8 @@ pipeline {
                 sh 'echo y | docker container prune '
                 sh 'docker volume rm jukibach-postgres-data || echo "no volume"'
 
-                sh "docker run --name jukibach-postgres --rm --network dev -v jukibach-postgres-data:/var/lib/postgres -e POSTGRESQL_PASSWORD=${POSTGRESQL_ROOT_LOGIN_PSW} -e POSTGRES_DATABASE=university_management -d postgres "
-                sh 'sleep 40'
+                sh "docker run --name jukibach-postgres --network dev -v jukibach-postgres-data:/var/lib/postgres -e POSTGRESQL_PASSWORD=${POSTGRESQL_ROOT_LOGIN_PSW} -e POSTGRES_DATABASE=university_management -d postgres "
+                sh 'docker ps -a'
                 sh "docker exec -i jukibach-postgres postgres --user=postgres --password=${POSTGRESQL_ROOT_LOGIN_PSW} < script"
             }
         }
