@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'my-maven'
+        maven 'my-maven',
         docker 'mydocker'
     }
     environment {
