@@ -1,4 +1,5 @@
-FROM ubuntu:latest
-LABEL authors="ROG Zephyrus"
+FROM openjdk:17
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+COPY target/universitymanagement-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT [ "java", "-jar" , "app.jar" ]
