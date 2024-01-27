@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class UniversityManagementApplication {
     
-    public static x main(String[] args) {
+    public static void main(String[] args) {
         log.info("Application start");
         SpringApplication.run(UniversityManagementApplication.class, args);
     }
