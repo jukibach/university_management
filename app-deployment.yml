@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: spring-boot-k8s-demo
+spec:
+    selector:
+        matchLabels:
+            app: spring-boot-k8s-demo
+    replicas: 3
+    template:
+        metadata:
+            labels:
+                app: spring-boot-k8s-demo
+        spec:
+            containers:
+                -   name: spring-boot-k8s-demo
+                    image: jukibach/springboot:1.0
+                    ports:
+                        -   containerPort: 8080
+                    env:
+                        -   name: POSTGRESQL_HOST
+                            value: postgres
+                        -   name: POSTGRES_DATABASE
+                            value: postgres
+                        -   name: POSTGRESQL_USERNAME
+                            value: postgres
+                        -   name: POSTGRES_PASSWORD
+                            value: postgres
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: springboot-k8s-demo-svc
+spec:
+    selector:
+        app: spring-boot-k8s-demo
+    ports:
+        -   protocol: "TCP"
+            port: 8080
+            targetPort: 8080
+    type: NodePort
